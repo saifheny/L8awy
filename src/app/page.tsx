@@ -116,8 +116,8 @@ export default function Home() {
       ) : (
         <div className="max-w-7xl mx-auto flex flex-col items-center relative z-10">
           <div className="mb-10 flex flex-col items-center">
-            {/* Logo image */}
             <motion.img
+              id="tour-logo"
               src="https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png"
               alt="منصتنا التعليمية"
               className="h-36 md:h-48 w-auto object-contain mb-4 select-none"

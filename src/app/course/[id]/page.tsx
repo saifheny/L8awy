@@ -100,6 +100,16 @@ export default function CourseDetailsPage() {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
+        {/* Level Badge - top right side */}
+        <div className="absolute top-6 right-6 z-[100]">
+          <span
+            className="inline-block px-3 py-1 rounded-full text-white text-xs font-bold font-cairo shadow-lg backdrop-blur-md bg-opacity-90 border border-white/20"
+            style={{ background: colors.accent }}
+          >
+            {course.level}
+          </span>
+        </div>
+
         {/* Back Button - left side in RTL layout */}
         <Link href="/" className="absolute top-6 left-6 z-[100]">
           <button className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all shadow-xl">
@@ -110,13 +120,7 @@ export default function CourseDetailsPage() {
         {/* Course Info at bottom of hero */}
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
           <div className="max-w-4xl mx-auto">
-            {/* Level Badge */}
-            <span
-              className="inline-block px-4 py-1.5 rounded-full text-white text-sm font-bold font-cairo mb-4 shadow-lg"
-              style={{ background: colors.accent }}
-            >
-              {course.level}
-            </span>
+
 
             <h1 className="text-3xl md:text-5xl font-aref font-bold text-white mb-3 leading-tight drop-shadow-xl">
               {course.title}
@@ -132,25 +136,6 @@ export default function CourseDetailsPage() {
               </p>
             )}
 
-            {/* Stats */}
-            <div className="flex flex-wrap gap-4 mt-5">
-              <div className="flex items-center gap-2 text-white/90 font-cairo text-sm">
-                <IoStar className="text-yellow-400" />
-                <span className="font-bold">4.9</span> (320 تقييم)
-              </div>
-              <div className="flex items-center gap-2 text-white/90 font-cairo text-sm">
-                <IoPeople style={{ color: colors.accent }} />
-                <span>{course.teacherCount} مدرس</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/90 font-cairo text-sm">
-                <IoDocumentText className="text-green-400" />
-                <span>{course.examCount} امتحان</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/90 font-cairo text-sm">
-                <IoTime className="text-purple-300" />
-                <span>{course.durationMonths} أشهر</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -170,24 +155,47 @@ export default function CourseDetailsPage() {
               </div>
               <button
                 onClick={handleSubscribeClick}
-                className="w-full px-5 py-3 font-bold font-cairo text-sm sm:text-base text-white rounded-xl transition-all active:scale-95 shadow-lg"
+                className="w-auto min-w-[140px] px-4 py-2 font-bold font-cairo text-xs md:text-sm text-white rounded-lg transition-all active:scale-95 shadow-md"
                 style={{
                   background: colors.accent,
-                  boxShadow: `0 4px 0 0 ${colors.shadow}, 0 0 24px ${colors.glow}`,
+                  boxShadow: `0 3px 0 0 ${colors.shadow}, 0 0 15px ${colors.glow}`,
                 }}
               >
                 {course.price === 0 ? 'انضم مجاناً' : `اشترك الآن — ${course.price} ج.م`}
               </button>
-              <p className="text-white/70 font-cairo text-xs text-center">
-                {course.price === 0 ? 'متاح مجاناً لمشتركي الكورس الشامل' : 'ادفع مرة واحدة، تعلم إلى الأبد'}
-              </p>
+              <div className="mt-1 pt-3 border-t border-white/20 w-[80%] max-w-[200px] text-center">
+                <p className="text-white/60 font-cairo text-[10px] md:text-xs tracking-wide">
+                  {course.price === 0 ? 'متاح مجاناً لمشتركي الكورس الشامل' : 'ادفع مرة واحدة، تعلم إلى الأبد'}
+                </p>
+              </div>
             </motion.div>
           </div>
         )}
       </div>
 
       {/* ======================== CONTENT ======================== */}
-      <div className="max-w-4xl mx-auto px-4 mt-8">
+      <div className="max-w-4xl mx-auto px-4 mt-6">
+
+        {/* Course Stats Info (Moved below image) */}
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-3 mb-8 pb-6 border-b border-gray-100">
+          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
+            <IoStar className="text-yellow-400 text-lg" />
+            <span className="font-bold text-gray-900">4.9</span> 
+            <span className="text-xs">(320 تقييم)</span>
+          </div>
+          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
+            <IoPeople className="text-lg" style={{ color: colors.accent }} />
+            <span><strong className="text-gray-900">{course.teacherCount}</strong> مدرس</span>
+          </div>
+          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
+            <IoDocumentText className="text-green-500 text-lg" />
+            <span><strong className="text-gray-900">{course.examCount}</strong> امتحان</span>
+          </div>
+          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
+            <IoTime className="text-purple-500 text-lg" />
+            <span><strong className="text-gray-900">{course.durationMonths}</strong> أشهر</span>
+          </div>
+        </div>
 
         {/* If subscribed: show tabs + tab content */}
         {isSubscribed && (

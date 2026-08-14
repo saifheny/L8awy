@@ -22,6 +22,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
         {/* Right Side */}
         <div className="flex items-center gap-3">
           <button
+            id="tour-wallet"
             onClick={user ? onWalletClick : onSubscribeClick}
             className="px-4 h-12 rounded-xl flex items-center justify-center gap-2 bg-white/80 hover:bg-white text-gray-800 transition-colors pointer-events-auto shadow-sm"
             title={user ? "المحفظة" : "الاشتراك"}
@@ -59,6 +60,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             </Link>
           ) : (
             <button
+              id="tour-lang-selector"
               onClick={onLanguageClick}
               className="w-12 h-12 rounded-xl flex items-center justify-center bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
               title="تغيير اللغة"
