@@ -13,7 +13,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClick }: TopBarProps) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   return (
     <div className="absolute top-4 left-4 right-4 z-40 pointer-events-none" dir="rtl">
@@ -34,7 +34,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
 
         {/* Center */}
         <div className="flex-1 flex justify-center items-center pointer-events-auto">
-          {!user && (
+          {!user && !loading && (
             <Link href="/register">
               <button className="px-8 py-3 bg-pink-500 text-white font-bold rounded-xl hover:bg-pink-400 transition-colors shadow-sm">
                 سجّل

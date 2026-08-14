@@ -63,6 +63,9 @@ const RSS_FEEDS = [
   'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB?hl=ar&gl=EG&ceid=EG:ar', // World news
   'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=ar&gl=EG&ceid=EG:ar', // Tech news
   'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtVnVHZ0pWVXlnQVAB?hl=ar&gl=EG&ceid=EG:ar', // Sports
+  'https://www.skynewsarabia.com/rss.xml', // Sky News Arabia
+  'http://feeds.bbci.co.uk/arabic/rss.xml', // BBC Arabic
+  'https://arabic.cnn.com/api/v1/rss/world/rss.xml', // CNN Arabic
 ];
 
 async function fetchGlobalNews(pageIndex: number): Promise<NewsItem[]> {
@@ -179,9 +182,28 @@ export default function ToolsPage() {
 
   // Initial news load
   useEffect(() => {
+    const cached = localStorage.getItem('loghawy_news_cache');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        const now = new Date().getTime();
+        // Check if less than 24 hours (24 * 60 * 60 * 1000)
+        if (now - parsed.timestamp < 24 * 60 * 60 * 1000 && parsed.news.length > 0) {
+          setGlobalNews(parsed.news);
+          setNewsPage(parsed.page);
+          return;
+        }
+      } catch (e) {}
+    }
+
     fetchGlobalNews(0).then(items => {
       setGlobalNews(items);
       setNewsPage(1);
+      localStorage.setItem('loghawy_news_cache', JSON.stringify({
+        timestamp: new Date().getTime(),
+        news: items,
+        page: 1
+      }));
     });
   }, []);
 
@@ -200,7 +222,13 @@ export default function ToolsPage() {
               // Deduplicate based on title
               const existingTitles = new Set(prev.map(p => p.title));
               const newUnique = items.filter(item => !existingTitles.has(item.title));
-              return [...prev, ...newUnique];
+              const newNews = [...prev, ...newUnique];
+              localStorage.setItem('loghawy_news_cache', JSON.stringify({
+                timestamp: new Date().getTime(),
+                news: newNews,
+                page: newsPage + 1
+              }));
+              return newNews;
             });
             setNewsPage(p => p + 1);
           }
@@ -320,9 +348,9 @@ export default function ToolsPage() {
               
               {/* Unified Back Button (Cutout style) */}
               <button 
-                onClick={() => router.push('/')}
+                onClick={() => router.back()}
                 className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors shadow-sm border border-gray-100 flex-shrink-0"
-                title="رجوع للرئيسية"
+                title="رجوع للصفحة السابقة"
               >
                 <IoArrowBack size={18} className="mr-0.5" />
               </button>
