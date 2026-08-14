@@ -4,14 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoSettings } from 'react-icons/io5';
+import { IoSearch } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FloatingAIAssistant() {
   const { user } = useAuth();
   const pathname = usePathname();
 
-  // Show only if user is logged in AND we are on the homepage (courses interface)
+  // Show only if user is logged in AND on homepage
   const isVisible = user && pathname === '/';
 
   return (
@@ -21,22 +21,33 @@ export default function FloatingAIAssistant() {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0, opacity: 0 }}
-          className="fixed bottom-24 left-6 z-50"
+          className="fixed bottom-24 left-5 z-50"
         >
           <Link href="/tools">
-            <button
-              className="w-14 h-14 bg-gradient-to-tr from-purple-600 to-indigo-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:shadow-[0_8px_30px_rgb(124,58,237,0.4)] transition-all transform hover:scale-110 group relative"
-              title="المساعد اللغوي الذكي"
-            >
-              <IoSettings size={28} className="animate-spin-slow group-hover:animate-none" />
-              
-              {/* Tooltip bubble */}
-              <span className="absolute left-full ml-4 top-1/2 -translate-y-1/2 bg-white text-gray-800 text-xs font-bold font-cairo px-3 py-1.5 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                المساعد الذكي
-                {/* Arrow */}
-                <span className="absolute top-1/2 -left-1 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-white"></span>
-              </span>
-            </button>
+            {/* Pill shape with animated gradient border */}
+            <div className="animated-border rounded-2xl shadow-[0_8px_30px_rgba(66,133,244,0.25)] hover:shadow-[0_8px_30px_rgba(66,133,244,0.4)] transition-shadow">
+              <div className="bg-white rounded-[14px] px-4 py-2.5 flex items-center gap-2.5 min-w-[130px]">
+                <IoSearch size={16} className="text-[#4285F4] flex-shrink-0" />
+                {/* Animated text that fades in and out */}
+                <div className="relative overflow-hidden h-5 flex-1">
+                  <motion.span
+                    animate={{ opacity: [1, 1, 0, 0, 1] }}
+                    transition={{ duration: 4, repeat: Infinity, times: [0, 0.4, 0.5, 0.9, 1] }}
+                    className="absolute inset-0 text-xs font-bold font-cairo text-gray-700 whitespace-nowrap flex items-center"
+                  >
+                    المساعد الذكي
+                  </motion.span>
+                  <motion.span
+                    animate={{ opacity: [0, 0, 1, 1, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, times: [0, 0.4, 0.5, 0.9, 1] }}
+                    className="absolute inset-0 text-xs font-bold text-[#4285F4] whitespace-nowrap flex items-center"
+                    dir="ltr"
+                  >
+                    AI Dictionary
+                  </motion.span>
+                </div>
+              </div>
+            </div>
           </Link>
         </motion.div>
       )}

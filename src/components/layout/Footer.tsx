@@ -63,18 +63,17 @@ export default function Footer() {
 
       {/* Brand Bottom */}
       {showBrand && (
-        <div className="mt-12 pt-8 pb-4 border-t border-gray-100/50 text-center relative z-10 flex flex-col items-center justify-center">
+        <div className="mt-12 pt-8 pb-6 border-t border-gray-100 text-center relative z-10 flex flex-col items-center justify-center bg-white/50">
           <h2 className="text-4xl md:text-5xl font-aref font-bold mb-4 pb-2" style={{
             background: 'linear-gradient(to right, #3b82f6, #ec4899, #f59e0b)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            textShadow: '0px 4px 20px rgba(236, 72, 153, 0.2)'
           }}>
             لغوي
           </h2>
-          <p className="text-gray-400 text-xs md:text-sm font-cairo tracking-widest uppercase flex items-center gap-2">
+          <p className="text-gray-500 text-xs md:text-sm font-cairo tracking-widest uppercase flex items-center gap-2">
             <span>© 2026 LOGHAWY PLATFORM.</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
             <span>BUILT FOR THE FUTURE.</span>
           </p>
         </div>
