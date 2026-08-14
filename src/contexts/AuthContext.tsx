@@ -9,7 +9,7 @@ import { courses } from '@/data/courses';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  register: (name: string, phone: string, gender: string, language: string) => Promise<void>;
+  register: (name: string, phone: string, gender: string, language: string) => Promise<string>;
   login: (phone: string) => Promise<void>;
   logout: () => Promise<void>;
   updateWalletBalance: (amount: number) => Promise<void>;
