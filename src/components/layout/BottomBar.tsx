@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoBookOutline, IoWalletOutline, IoPeopleOutline, IoCloseOutline, IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { useAuth } from '@/contexts/AuthContext';
-import { teachersData } from '@/app/teachers/page';
+import { teachersData } from '@/data/teachers';
 
 interface BottomBarProps {
   isSubscribed?: boolean;

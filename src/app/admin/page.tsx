@@ -8,7 +8,7 @@ import { WalletTransaction } from '@/lib/types';
 import { IoCheckmark, IoClose, IoWallet, IoPeople, IoChatbubbles, IoSend } from 'react-icons/io5';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { teachersData } from '@/app/teachers/page';
+import { teachersData } from '@/data/teachers';
 import { courses } from '@/data/courses';
 
 export default function AdminPage() {

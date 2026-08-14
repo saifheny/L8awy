@@ -7,7 +7,7 @@ import { IoArrowBack, IoSend, IoCheckmarkDoneOutline, IoCheckmarkOutline, IoPeop
 import { motion, AnimatePresence } from 'framer-motion';
 import { rtdb } from '@/lib/firebase';
 import { ref, onValue, push, serverTimestamp } from 'firebase/database';
-import { teachersData } from '@/app/teachers/page';
+import { teachersData } from '@/data/teachers';
 import { courses } from '@/data/courses';
 
 export default function ChatPage() {
