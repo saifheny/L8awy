@@ -200,7 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const price = courseObj.price;
     if (user.walletBalance < price) {
-      alert('رصيد المحفظة غير كافٍ. يرجى الشحن أولاً.');
+      throw new Error('رصيد المحفظة غير كافٍ. يرجى شحن المحفظة أولاً.');
       return false;
     }
 

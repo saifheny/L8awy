@@ -149,31 +149,79 @@ export default function ChatPage() {
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#e5ddd5] opacity-95" style={{ backgroundImage: `url('https://www.transparenttextures.com/patterns/cubes.png')` }}>
+      <div className="flex-1 overflow-y-auto p-4 space-y-1 bg-[#f5ede8]">
+        {messages.length === 0 && (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-white/60 flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <IoPeopleOutline className="text-3xl text-gray-400" />
+              </div>
+              <p className="text-sm text-gray-500 font-cairo">ابدأ المحادثة مع {teacher.name}</p>
+            </div>
+          </div>
+        )}
         {messages.map((msg, idx) => {
           const isMe = msg.sender === 'user';
+          const prevMsg = messages[idx - 1];
+          const senderChanged = !prevMsg || prevMsg.sender !== msg.sender;
+          
+          // Date separator: show if first msg or day changed
+          const msgDate = msg.createdAt ? new Date(msg.createdAt) : null;
+          const prevDate = prevMsg?.createdAt ? new Date(prevMsg.createdAt) : null;
+          const showDateSep = idx === 0 || (msgDate && prevDate && msgDate.toDateString() !== prevDate.toDateString());
+
           return (
-            <motion.div 
-              key={msg.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-sm relative ${isMe ? 'bg-[#dcf8c6] rounded-tr-none' : 'bg-white rounded-tl-none'}`}>
-                <p className="text-gray-800 font-cairo text-sm sm:text-base leading-relaxed break-words">{msg.text}</p>
-                <div className="flex items-center justify-end gap-1 mt-1">
-                  <span className="text-[10px] text-gray-500">
-                    {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString('ar-EG', { hour: 'numeric', minute: 'numeric', hour12: true }) : ''}
-                  </span>
-                  {isMe && (
-                    msg.isRead ? 
-                    <IoCheckmarkDoneOutline className="text-blue-500 text-sm" /> :
-                    <IoCheckmarkOutline className="text-gray-400 text-sm" />
-                  )}
+            <div key={msg.id}>
+              {/* Date separator */}
+              {showDateSep && msgDate && (
+                <div className="flex items-center justify-center my-4">
+                  <div className="bg-white/70 backdrop-blur-sm border border-white/80 rounded-full px-3 py-1 shadow-sm">
+                    <span className="text-[10px] text-gray-500 font-cairo">
+                      {msgDate.toLocaleDateString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              )}
+
+              {/* Sender name separator (when sender changes) */}
+              {senderChanged && !isMe && (
+                <div className="flex items-center gap-2 mt-3 mb-1 px-1">
+                  <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <IoPeopleOutline className="text-white text-[10px]" />
+                  </div>
+                  <span className="text-[10px] text-blue-600 font-semibold font-cairo">{teacher.name}</span>
+                </div>
+              )}
+              {senderChanged && isMe && idx !== 0 && (
+                <div className="flex items-center justify-end gap-2 mt-3 mb-1 px-1">
+                  <span className="text-[10px] text-gray-500 font-cairo">أنت</span>
+                  <div className="w-5 h-5 rounded-full bg-gray-400 flex items-center justify-center flex-shrink-0">
+                    <IoPeopleOutline className="text-white text-[10px]" />
+                  </div>
+                </div>
+              )}
+
+              <motion.div 
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.15 }}
+                className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-0.5`}
+              >
+                <div className={`max-w-[78%] rounded-2xl px-3.5 py-2 shadow-sm relative ${isMe ? 'bg-[#dcf8c6] rounded-tr-sm' : 'bg-white rounded-tl-sm'}`}>
+                  <p className="text-gray-800 font-cairo text-sm leading-relaxed break-words">{msg.text}</p>
+                  <div className="flex items-center justify-end gap-1 mt-0.5">
+                    <span className="text-[10px] text-gray-400">
+                      {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString('ar-EG', { hour: 'numeric', minute: 'numeric', hour12: true }) : ''}
+                    </span>
+                    {isMe && (
+                      msg.isRead ? 
+                      <IoCheckmarkDoneOutline className="text-blue-500 text-xs" /> :
+                      <IoCheckmarkOutline className="text-gray-400 text-xs" />
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           );
         })}
         
@@ -182,12 +230,14 @@ export default function ChatPage() {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-start"
+            className="flex justify-start mt-1"
           >
-            <div className="max-w-[80%] rounded-2xl rounded-tl-none px-4 py-2 shadow-sm bg-white border border-gray-100">
-              <p className="text-gray-500 font-cairo text-sm sm:text-base leading-relaxed break-words">
-                الرجاء الانتظار، سيتم الرد عليك في أقرب وقت...
-              </p>
+            <div className="max-w-[60%] rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm bg-white border border-gray-100">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
             </div>
           </motion.div>
         )}

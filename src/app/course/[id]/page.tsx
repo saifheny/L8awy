@@ -85,10 +85,10 @@ export default function CourseDetailsPage() {
   const colors = colorMap[course.language] || colorMap.en;
 
   return (
-    <main className="min-h-screen dir-rtl pt-4 pb-24" style={{ background: 'transparent' }}>
+    <main className="min-h-screen dir-rtl pt-4 pb-24 overflow-x-hidden" style={{ background: 'transparent' }}>
 
       {/* ======================== HERO HEADER ======================== */}
-      <div className="relative w-full" style={{ height: '480px' }}>
+      <div className="relative w-full" style={{ height: 'min(480px, 70vw)' }}>
         {/* Background Image - blurred by default, clear only when subscribed */}
         <img
           src={coverImage}
@@ -156,33 +156,29 @@ export default function CourseDetailsPage() {
 
         {/* Subscribe Lock Overlay */}
         {!isSubscribed && !checking && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center gap-4"
+              className="flex flex-col items-center gap-4 w-full max-w-xs"
             >
               <div
-                className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
+                className="w-12 h-12 rounded-full flex items-center justify-center shadow-xl"
                 style={{ background: 'rgba(0,0,0,0.5)', border: `2px solid ${colors.accent}` }}
               >
-                <IoLockClosed className="text-white text-2xl" />
+                <IoLockClosed className="text-white text-xl" />
               </div>
               <button
                 onClick={handleSubscribeClick}
-                className="px-7 py-2.5 font-bold font-cairo text-base text-white rounded-xl transition-all active:scale-95 shadow-lg"
+                className="w-full px-5 py-3 font-bold font-cairo text-sm sm:text-base text-white rounded-xl transition-all active:scale-95 shadow-lg"
                 style={{
                   background: colors.accent,
                   boxShadow: `0 4px 0 0 ${colors.shadow}, 0 0 24px ${colors.glow}`,
                 }}
               >
-                {course.price === 0 ? (
-                  'انضم مجاناً'
-                ) : (
-                  `اشترك الآن — ${course.price} ج.م`
-                )}
+                {course.price === 0 ? 'انضم مجاناً' : `اشترك الآن — ${course.price} ج.م`}
               </button>
-              <p className="text-white/70 font-cairo text-xs">
+              <p className="text-white/70 font-cairo text-xs text-center">
                 {course.price === 0 ? 'متاح مجاناً لمشتركي الكورس الشامل' : 'ادفع مرة واحدة، تعلم إلى الأبد'}
               </p>
             </motion.div>

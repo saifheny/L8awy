@@ -82,9 +82,10 @@
    ======================== */
 body {
   font-family: 'Cairo', sans-serif;
-  background-color: #fdf6f0; /* Warm reddish-cream base */
+  background-color: #fdf6f0;
   color: #111827;
   overflow-x: hidden;
+  max-width: 100vw;
   position: relative;
 }
 
