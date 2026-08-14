@@ -117,27 +117,6 @@ export default function CourseDetailsPage() {
           </button>
         </Link>
 
-        {/* Course Info at bottom of hero */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
-          <div className="max-w-4xl mx-auto">
-
-
-            <h1 className="text-3xl md:text-5xl font-aref font-bold text-white mb-3 leading-tight drop-shadow-xl">
-              {course.title}
-            </h1>
-
-            {isSubscribed ? (
-              <p className="text-white/80 text-base md:text-lg font-cairo max-w-2xl leading-relaxed">
-                {course.description}
-              </p>
-            ) : (
-              <p className="text-white/70 text-base font-cairo blur-sm select-none pointer-events-none">
-                ●●●●●●●●● ●●●●●●●●●●●●● ●●●●●●●●●●●● ●●●●●●●●●
-              </p>
-            )}
-
-          </div>
-        </div>
 
         {/* Subscribe Lock Overlay */}
         {!isSubscribed && !checking && (
@@ -174,7 +153,23 @@ export default function CourseDetailsPage() {
       </div>
 
       {/* ======================== CONTENT ======================== */}
-      <div className="max-w-4xl mx-auto px-4 mt-6">
+      <div className="max-w-4xl mx-auto px-4 mt-8">
+
+        {/* Course Title and Description */}
+        <div className="mb-6 text-center sm:text-right">
+          <h1 className="text-3xl md:text-4xl font-aref font-bold text-gray-900 mb-3 leading-tight">
+            {course.title}
+          </h1>
+          {isSubscribed ? (
+            <p className="text-gray-600 text-sm md:text-base font-cairo max-w-2xl leading-relaxed mx-auto sm:mx-0">
+              {course.description}
+            </p>
+          ) : (
+            <p className="text-gray-400 text-sm md:text-base font-cairo blur-sm select-none pointer-events-none mx-auto sm:mx-0 max-w-2xl">
+              ●●●●●●●●● ●●●●●●●●●●●●● ●●●●●●●●●●●● ●●●●●●●●●
+            </p>
+          )}
+        </div>
 
         {/* Course Stats Info (Moved below image) */}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-3 mb-8 pb-6 border-b border-gray-100">
