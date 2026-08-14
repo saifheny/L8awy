@@ -30,16 +30,6 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             <IoWallet size={24} className="text-blue-600" />
             <span className="font-bold font-cairo text-sm md:text-base">محفظتي</span>
           </button>
-          
-          <Link href="/tools" className="pointer-events-auto">
-            <button
-              className="px-4 h-12 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white transition-all shadow-md transform hover:scale-105"
-              title="المساعد الذكي"
-            >
-              <IoSettings size={20} className="animate-spin-slow" />
-              <span className="font-bold font-cairo text-sm md:text-base">المساعد الذكي</span>
-            </button>
-          </Link>
         </div>
 
         {/* Center */}

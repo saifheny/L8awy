@@ -6,6 +6,7 @@ import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import Footer from '@/components/layout/Footer';
 import TourGuide from '@/components/ui/TourGuide';
 import ReferralTracker from '@/components/layout/ReferralTracker';
+import FloatingAIAssistant from '@/components/ui/FloatingAIAssistant';
 import { Suspense } from 'react';
 
 const cairo = Cairo({ subsets: ['arabic'], variable: '--font-body' });
@@ -69,14 +70,15 @@ export default function RootLayout({
 
         
         <AuthProvider>
+          <TourGuide />
           <Suspense fallback={null}>
             <ReferralTracker />
-            <TourGuide />
           </Suspense>
-          <div className="flex-1 flex flex-col relative z-0">
+          <div className="flex-1 flex flex-col relative z-10 w-full">
             {children}
-            <Footer />
           </div>
+          <Footer />
+          <FloatingAIAssistant />
         </AuthProvider>
       </body>
     </html>
