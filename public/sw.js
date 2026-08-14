@@ -7,6 +7,15 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass through all requests, rely on Next.js offline capabilities or just browser cache
-  event.respondWith(fetch(event.request));
+  // Let the browser handle cross-origin requests directly to avoid CORS issues
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request).catch((err) => {
+      console.error('Service Worker fetch failed:', err);
+      throw err;
+    })
+  );
 });
