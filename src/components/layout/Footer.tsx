@@ -8,6 +8,8 @@ export default function Footer() {
   const pathname = usePathname();
   // Show brand only on home and course pages
   const showBrand = pathname === '/' || pathname.startsWith('/course/');
+  // Hide entire footer on tools page
+  if (pathname === '/tools') return null;
 
   return (
     <footer className="mt-auto border-t border-gray-100 bg-white/70 backdrop-blur-2xl pb-28 md:pb-12 pt-12 relative overflow-hidden">
