@@ -216,7 +216,14 @@ export default function WalletPage() {
                 </div>
 
                 <div>
-                  <p className="text-sm font-bold text-gray-700 mb-2">اكتب المبلغ الذي قمت بتحويله:</p>
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="text-sm font-bold text-gray-700">اكتب المبلغ الذي قمت بتحويله:</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => setAmount(100)} className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold transition-colors">100 ج.م</button>
+                      <button onClick={() => setAmount(200)} className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold transition-colors">200 ج.م</button>
+                      <button onClick={() => setAmount(500)} className="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-bold transition-colors">500 ج.م</button>
+                    </div>
+                  </div>
                   <input
                     type="number"
                     placeholder="مبلغ التحويل (مثال: 150)"

@@ -43,6 +43,22 @@ function RegisterForm() {
         await login(loginCodeInput);
         router.push('/');
       } else {
+        // Validate Egyptian Phone Number
+        const phoneRegex = /^01[0125][0-9]{8}$/;
+        if (!phoneRegex.test(phone)) {
+          setError('يجب إدخال رقم هاتف مصري صحيح مكون من 11 رقم.');
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate Triple Name
+        const nameParts = name.trim().split(/\s+/);
+        if (nameParts.length < 3) {
+          setError('يرجى إدخال الاسم الثلاثي كاملاً.');
+          setIsLoading(false);
+          return;
+        }
+
         const code = await register(name, phone, gender, language);
         setGeneratedCode(code);
       }

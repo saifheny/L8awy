@@ -1,0 +1,21 @@
+{
+  "name": "Loghawy Platform",
+  "short_name": "لغوي",
+  "description": "منصتك المتكاملة لتعلم اللغات الإنجليزية، الألمانية، والتركية",
+  "start_url": "/poo/",
+  "display": "standalone",
+  "background_color": "#fdf6f0",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

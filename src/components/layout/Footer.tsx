@@ -1,7 +1,14 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { IoHome, IoPeople, IoWallet, IoPerson } from 'react-icons/io5';
 
 export default function Footer() {
+  const pathname = usePathname();
+  // Show brand only on home and course pages
+  const showBrand = pathname === '/' || pathname.startsWith('/course/');
+
   return (
     <footer className="mt-auto border-t border-gray-100 bg-white/70 backdrop-blur-2xl pb-28 md:pb-12 pt-12 relative overflow-hidden">
       {/* Decorative blurry blob */}
@@ -11,12 +18,16 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
         
         {/* Brand */}
-        <div className="flex flex-col items-center md:items-start gap-3">
-           <img src="https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png" alt="Loghawy" className="h-10 w-auto opacity-80 grayscale hover:grayscale-0 transition-all duration-500" />
-           <p className="text-gray-400 font-cairo text-xs max-w-xs text-center md:text-right leading-relaxed">
-             منصتك المتكاملة لتعلم اللغات بأسلوب تفاعلي وحديث. صُممت لعام 2026.
-           </p>
-        </div>
+        {showBrand ? (
+          <div className="flex flex-col items-center md:items-start gap-3">
+             <img src="https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png" alt="Loghawy" className="h-10 w-auto opacity-80 grayscale hover:grayscale-0 transition-all duration-500" />
+             <p className="text-gray-400 font-cairo text-xs max-w-xs text-center md:text-right leading-relaxed">
+               منصتك المتكاملة لتعلم اللغات بأسلوب تفاعلي وحديث. صُممت لعام 2026.
+             </p>
+          </div>
+        ) : (
+          <div className="hidden md:block"></div>
+        )}
 
         {/* Links */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-10">
@@ -48,8 +59,8 @@ export default function Footer() {
 
       </div>
 
-      <div className="mt-12 pt-8 border-t border-gray-100/50 text-center relative z-10 flex flex-col items-center justify-center">
-        <h2 className="text-4xl md:text-5xl font-aref font-bold mb-4" style={{
+      <div className="mt-12 pt-8 pb-4 border-t border-gray-100/50 text-center relative z-10 flex flex-col items-center justify-center">
+        <h2 className="text-4xl md:text-5xl font-aref font-bold mb-4 pb-2" style={{
           background: 'linear-gradient(to right, #3b82f6, #ec4899, #f59e0b)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
