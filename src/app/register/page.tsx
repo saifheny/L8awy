@@ -44,7 +44,7 @@ function RegisterForm() {
         router.push('/');
       } else {
         const code = await register(name, phone, gender, language);
-        setGeneratedCode(code || null);
+        setGeneratedCode(code);
       }
     } catch (err: any) {
       setError(err.message || 'حدث خطأ أثناء العملية. تأكد من صحة البيانات وحاول مرة أخرى.');
