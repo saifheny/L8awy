@@ -98,8 +98,20 @@ export default function Home() {
       />
 
       {authLoading || checkingSubscriptions ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="max-w-7xl mx-auto mt-8">
+          <div className="h-6 skeleton-shimmer rounded w-32 mb-6 mx-auto" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl overflow-hidden">
+                <div className="w-full h-36 skeleton-shimmer" />
+                <div className="p-4 bg-white/60 flex flex-col gap-2">
+                  <div className="h-4 skeleton-shimmer rounded w-[70%]" />
+                  <div className="h-3 skeleton-shimmer rounded w-[50%]" />
+                  <div className="h-3 skeleton-shimmer rounded w-[40%]" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="max-w-7xl mx-auto flex flex-col items-center relative z-10">

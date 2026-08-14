@@ -54,18 +54,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return `STU-${randomNum}`;
   };
 
-  const generateReferralCode = (name: string, phone: string) => {
-    // Take first 2 Arabic/Latin chars from name
-    const nameChars = name.replace(/\s/g, '').slice(0, 2);
-    // Take last 3 digits of phone
-    const phoneDigits = phone.replace(/\D/g, '').slice(-3);
-    // Random 4 alphanumeric chars
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let rand = '';
-    for (let i = 0; i < 4; i++) {
-      rand += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return `${nameChars}${phoneDigits}${rand}`;
+  const generateReferralCode = (_name: string, phone: string) => {
+    // Last 4 digits of phone
+    const phoneDigits = phone.replace(/\D/g, '').slice(-4);
+    // Random 6 digits
+    const rand = Math.floor(100000 + Math.random() * 900000).toString();
+    return `${phoneDigits}${rand}`;
   };
 
   const register = async (name: string, phone: string, gender: string, language: string) => {

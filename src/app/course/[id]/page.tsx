@@ -49,8 +49,14 @@ export default function CourseDetailsPage() {
 
   if (authLoading || checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen dir-rtl pt-4 pb-24">
+        <div className="max-w-4xl mx-auto px-4 mt-6 space-y-4">
+          <div className="w-full h-64 skeleton-shimmer rounded-2xl" />
+          <div className="h-5 skeleton-shimmer rounded w-48" />
+          <div className="h-8 skeleton-shimmer rounded w-3/4" />
+          <div className="h-4 skeleton-shimmer rounded w-full" />
+          <div className="h-4 skeleton-shimmer rounded w-5/6" />
+        </div>
       </div>
     );
   }
@@ -154,34 +160,29 @@ export default function CourseDetailsPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center gap-6"
+              className="flex flex-col items-center gap-4"
             >
               <div
-                className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl"
+                className="w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
                 style={{ background: 'rgba(0,0,0,0.5)', border: `2px solid ${colors.accent}` }}
               >
-                <IoLockClosed className="text-white text-4xl" />
+                <IoLockClosed className="text-white text-2xl" />
               </div>
               <button
                 onClick={handleSubscribeClick}
-                className="px-10 py-4 font-black font-cairo text-xl text-white rounded-2xl transition-all active:scale-95 shadow-2xl"
+                className="px-7 py-2.5 font-bold font-cairo text-base text-white rounded-xl transition-all active:scale-95 shadow-lg"
                 style={{
                   background: colors.accent,
-                  boxShadow: `0 8px 0 0 ${colors.shadow}, 0 0 40px ${colors.glow}`,
+                  boxShadow: `0 4px 0 0 ${colors.shadow}, 0 0 24px ${colors.glow}`,
                 }}
               >
                 {course.price === 0 ? (
                   'انضم مجاناً'
                 ) : (
-                  <span className="flex items-center gap-2 justify-center flex-wrap">
-                    <span>اشترك الآن - {course.price} ج.م</span>
-                    {course.originalPrice && (
-                      <span className="line-through text-white/60 text-lg md:text-xl font-medium">بدلاً من {course.originalPrice} ج.م</span>
-                    )}
-                  </span>
+                  `اشترك الآن — ${course.price} ج.م`
                 )}
               </button>
-              <p className="text-white/70 font-cairo text-sm">
+              <p className="text-white/70 font-cairo text-xs">
                 {course.price === 0 ? 'متاح مجاناً لمشتركي الكورس الشامل' : 'ادفع مرة واحدة، تعلم إلى الأبد'}
               </p>
             </motion.div>
@@ -258,11 +259,11 @@ export default function CourseDetailsPage() {
         )}
 
         {/* ======================== COMMENTS ======================== */}
-        <div className="mt-10 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1 h-8 rounded-full" style={{ background: colors.accent }} />
-            <h3 className="text-2xl font-aref font-bold text-gray-900">التعليقات والأسئلة</h3>
-            <span className="text-sm text-gray-400 font-cairo mr-auto">يرد المدرسون عادةً خلال ساعات</span>
+        <div className="mt-10 mb-4">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-6 rounded-full" style={{ background: colors.accent }} />
+            <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Aref Ruqaa, serif' }}>التعليقات والأسئلة</h3>
+            <span className="text-xs text-gray-400 mr-auto">يرد المدرسون عادةً خلال ساعات</span>
           </div>
           <CommentsSection courseId={course.id} isSubscribed={isSubscribed} />
         </div>
