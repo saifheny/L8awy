@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { IoArrowBack, IoSearch, IoVolumeHigh, IoClose, IoLanguage, IoNewspaper, IoImages, IoBookOutline } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,7 +10,7 @@ interface Definition { definition: string; example?: string; synonyms?: string[]
 interface Meaning { partOfSpeech: string; definitions: Definition[]; }
 interface WordResult { word: string; phonetic?: string; phonetics?: { audio?: string }[]; meanings: Meaning[]; }
 interface WikiResult { title: string; extract: string; type?: string; thumbnail?: { source: string }; }
-interface NewsItem { title: string; url: string; source: { name: string }; publishedAt: string; }
+interface NewsItem { title: string; url: string; source: { name: string }; publishedAt: string; image?: string; }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const safeHostname = (url: string) => { try { return new URL(url).hostname; } catch { return ''; } };
@@ -26,9 +26,9 @@ async function fetchDict(word: string): Promise<WordResult | null> {
 
 async function fetchTranslation(word: string): Promise<string | null> {
   try {
-    const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
+    const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(word)}`);
     const d = await r.json();
-    const txt = d?.responseData?.translatedText;
+    const txt = d?.[0]?.[0]?.[0];
     return txt && txt !== word ? txt : null;
   } catch { return null; }
 }
@@ -57,27 +57,39 @@ async function fetchNews(word: string): Promise<NewsItem[]> {
   } catch { return []; }
 }
 
-async function fetchSuggestions(q: string): Promise<string[]> {
-  if (q.length < 2) return [];
+async function fetchGlobalNews(): Promise<NewsItem[]> {
   try {
-    const [spell, similar] = await Promise.all([
-      fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(q)}*&max=5`).then(r => r.json()).catch(() => []),
-      fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(q)}&max=3`).then(r => r.json()).catch(() => []),
-    ]);
-    const words = [...spell.map((x: any) => x.word), ...similar.map((x: any) => x.word)];
-    return [...new Set(words)].slice(0, 7);
+    // Top world news in Arabic from reliable RSS
+    const r = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss?hl=ar&gl=EG&ceid=EG:ar&api_key=`);
+    const d = await r.json();
+    return (d?.items ?? []).map((h: any) => ({
+      title: h.title,
+      url: h.link,
+      source: { name: h.source || 'أخبار العالم' },
+      publishedAt: h.pubDate,
+      image: h.thumbnail || h.enclosure?.link,
+    }));
   } catch { return []; }
 }
 
-// ─── Image grid ──────────────────────────────────────────────────────────────
+async function fetchSuggestions(q: string): Promise<string[]> {
+  if (q.length < 2) return [];
+  try {
+    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(q)}&limit=6&origin=*`);
+    const d = await r.json();
+    return d[1] || [];
+  } catch { return []; }
+}
+
+// ─── Image grid via Pollinations AI ──────────────────────────────────────────
 function WordImages({ word }: { word: string }) {
-  const variants = [word, `${word} nature`, `${word} art`, `${word} photography`];
+  const variants = [word, `${word} photography`, `${word} art`, `${word} concept`];
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
       {variants.map((v, i) => (
-        <a key={i} href={`https://unsplash.com/s/photos/${encodeURIComponent(word)}`} target="_blank" rel="noopener noreferrer"
+        <a key={i} href={`https://image.pollinations.ai/prompt/${encodeURIComponent(v)}`} target="_blank" rel="noopener noreferrer"
           className="relative group rounded-xl overflow-hidden aspect-square bg-gray-100 block">
-          <img src={`https://source.unsplash.com/200x200/?${encodeURIComponent(v)}`} alt={word}
+          <img src={`https://image.pollinations.ai/prompt/${encodeURIComponent(v)}?width=400&height=400&nologo=true`} alt={word}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
         </a>
@@ -89,14 +101,10 @@ function WordImages({ word }: { word: string }) {
 // ─── News divider ─────────────────────────────────────────────────────────────
 function NewsDivider() {
   return (
-    <div className="flex items-center gap-3 px-5 py-1">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-      <div className="flex gap-1">
-        {['#4285F4','#EA4335','#FBBC05','#34A853'].map((c,i) => (
-          <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c, opacity: 0.6 }} />
-        ))}
-      </div>
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+    <div className="flex items-center gap-3 px-5 py-3 opacity-60">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+      <img src="https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png" alt="Loghawy" className="h-6 w-auto grayscale opacity-50" />
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
     </div>
   );
 }
@@ -108,21 +116,28 @@ export default function ToolsPage() {
   const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  
   const [dictResult, setDictResult] = useState<WordResult | null>(null);
   const [translation, setTranslation] = useState<string | null>(null);
   const [wiki, setWiki] = useState<WikiResult | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [globalNews, setGlobalNews] = useState<NewsItem[]>([]);
+  
   const [activeTab, setActiveTab] = useState<'all' | 'images' | 'news' | 'translate'>('all');
 
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    fetchGlobalNews().then(setGlobalNews);
+  }, []);
+
+  useEffect(() => {
     if (suggestTimer.current) clearTimeout(suggestTimer.current);
     if (!query.trim() || searched) { setSuggestions([]); return; }
     suggestTimer.current = setTimeout(async () => {
       setSuggestions(await fetchSuggestions(query));
-    }, 120);
+    }, 150);
   }, [query, searched]);
 
   const doSearch = useCallback(async (word?: string) => {
@@ -162,7 +177,7 @@ export default function ToolsPage() {
   const audioUrl = dictResult?.phonetics?.find(p => p.audio)?.audio;
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden" dir="rtl">
+    <div className="min-h-screen relative overflow-x-hidden pb-32" dir="rtl">
 
       {/* ── ANIMATED BACKGROUND ── */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
@@ -194,24 +209,17 @@ export default function ToolsPage() {
       {/* ── HERO ── */}
       <motion.div
         layout
-        animate={searched ? { paddingTop: 16 } : { paddingTop: '18vh' }}
+        animate={searched ? { paddingTop: 16 } : { paddingTop: '12vh' }}
         transition={{ type: 'spring', stiffness: 280, damping: 30 }}
         className="flex flex-col items-center px-4 relative z-20"
       >
         <AnimatePresence>
           {!searched && (
             <motion.div exit={{ opacity: 0, y: -14, transition: { duration: 0.18 } }}
-              className="mb-10 text-center select-none flex flex-col items-center gap-4">
+              className="mb-8 text-center select-none flex flex-col items-center gap-1">
 
-              {/* Logo image */}
-              <img
-                src="https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png"
-                alt="Loghawy"
-                className="h-12 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-
-              {/* Colorful letters */}
-              <div className="flex items-center justify-center gap-1 text-5xl md:text-7xl font-black tracking-tight leading-none">
+              {/* Colorful letters - moved up */}
+              <div className="flex items-center justify-center gap-1 text-5xl md:text-7xl font-black tracking-tight leading-none mb-3">
                 <span style={{ color: '#4285F4' }}>ل</span>
                 <span style={{ color: '#EA4335' }}>ُ</span>
                 <span style={{ color: '#FBBC05' }}>غَ</span>
@@ -220,21 +228,20 @@ export default function ToolsPage() {
               </div>
 
               {/* Subtitle with separator */}
-              <div className="flex flex-col items-center gap-1 mt-1">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col items-center gap-1.5 mt-2">
+                <div className="flex items-center gap-2 mb-1">
                   {['#4285F4','#EA4335','#FBBC05','#34A853'].map((c,i) => (
                     <div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />
                   ))}
                 </div>
-                <p className="text-gray-500 text-sm font-cairo">القاموس الذكي المتكامل</p>
+                <p className="text-gray-500 text-sm font-cairo font-bold tracking-wide">القاموس الذكي المتكامل</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* ── SEARCH BAR ── */}
-        <div className="w-full max-w-[600px] relative">
-          {/* Always-animated gradient border */}
+        <div className="w-full max-w-[600px] relative z-30">
           <div className="animated-border">
             <div className={`flex items-center bg-white rounded-full px-5 py-3.5 gap-3 transition-shadow duration-200 ${
               focused ? 'shadow-[0_4px_24px_rgba(66,133,244,0.20)]' : 'shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
@@ -302,18 +309,65 @@ export default function ToolsPage() {
                 const w = words[Math.floor(Math.random() * words.length)];
                 setQuery(w); doSearch(w);
               }} className="px-5 py-2.5 bg-[#f8f9fa] hover:bg-[#f1f3f4] hover:shadow-sm text-gray-700 text-sm font-cairo rounded font-medium transition-all border border-transparent hover:border-gray-200">
-                كلمة عشوائية 🎲
+                ضربة حظ 🎲
               </button>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* ── TABS ── */}
+      {/* ── DEFAULT GLOBAL NEWS ── */}
+      {!searched && globalNews.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.2 }}
+          className="max-w-[800px] mx-auto px-4 mt-16"
+        >
+          <div className="flex items-center gap-2 mb-6 px-2">
+            <IoNewspaper className="text-[#4285F4] text-xl" />
+            <h2 className="text-lg font-bold font-cairo text-gray-800">أهم الأخبار العالمية اليوم</h2>
+            <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-bold animate-pulse">مباشر</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {globalNews.map((item, i) => (
+              <React.Fragment key={i}>
+                <a href={item.url} target="_blank" rel="noopener noreferrer"
+                  className="bg-white/60 backdrop-blur-sm hover:bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100/50 flex flex-col overflow-hidden group">
+                  {item.image && (
+                    <div className="h-40 w-full overflow-hidden bg-gray-100 relative">
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    </div>
+                  )}
+                  <div className="p-4 flex-1 flex flex-col">
+                    <p className="text-xs text-gray-400 font-cairo mb-2 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                      {item.source.name}
+                    </p>
+                    <h3 className="text-sm font-bold text-gray-800 group-hover:text-[#1a73e8] transition-colors leading-relaxed mb-3 flex-1" dir="rtl">
+                      {item.title}
+                    </h3>
+                  </div>
+                </a>
+                {/* Insert Logo divider every 4 items (every 2 rows) */}
+                {i > 0 && (i + 1) % 4 === 0 && i !== globalNews.length - 1 && (
+                  <div className="col-span-full">
+                    <NewsDivider />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── TABS (After Search) ── */}
       <AnimatePresence>
         {searched && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-gray-200 mt-2">
+            className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200 mt-2">
             <div className="max-w-[600px] mx-auto px-4 flex gap-1 overflow-x-auto">
               {[
                 { key: 'all',       label: 'الكل',    icon: '🔍' },
@@ -335,8 +389,8 @@ export default function ToolsPage() {
         )}
       </AnimatePresence>
 
-      {/* ── RESULTS ── */}
-      <div className="max-w-[600px] mx-auto px-4 pb-20 mt-4">
+      {/* ── SEARCH RESULTS ── */}
+      <div className="max-w-[600px] mx-auto px-4 mt-4">
         <AnimatePresence mode="wait">
 
           {loading && (
@@ -363,13 +417,13 @@ export default function ToolsPage() {
                     <span className="text-sm font-bold font-cairo text-gray-700">الترجمة إلى العربية</span>
                   </div>
                   <div className="grid grid-cols-2 gap-0 divide-x divide-gray-100" dir="ltr">
-                    <div className="p-5">
+                    <div className="p-5 bg-gray-50/50">
                       <p className="text-xs text-gray-400 mb-1.5 font-cairo">English</p>
                       <p className="text-2xl font-black text-gray-900">{query}</p>
                     </div>
-                    <div className="p-5">
-                      <p className="text-xs text-gray-400 mb-1.5 font-cairo">العربية</p>
-                      <p className="text-2xl font-black text-gray-900">{translation}</p>
+                    <div className="p-5 bg-blue-50/30">
+                      <p className="text-xs text-[#4285F4] mb-1.5 font-cairo">العربية</p>
+                      <p className="text-2xl font-black text-gray-900" dir="rtl">{translation}</p>
                     </div>
                   </div>
                 </div>
@@ -390,7 +444,7 @@ export default function ToolsPage() {
                     </div>
                     {audioUrl && (
                       <button onClick={() => new Audio(audioUrl).play()}
-                        className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-[#4285F4] hover:bg-blue-50 transition-colors">
+                        className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-[#4285F4] bg-blue-50 hover:bg-blue-100 transition-colors">
                         <IoVolumeHigh size={22} />
                       </button>
                     )}
@@ -451,15 +505,10 @@ export default function ToolsPage() {
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                   <div className="flex items-center gap-2 px-5 pt-4 pb-3 border-b border-gray-50">
                     <IoImages className="text-[#34A853]" size={18} />
-                    <span className="text-sm font-bold font-cairo text-gray-700">صور</span>
+                    <span className="text-sm font-bold font-cairo text-gray-700">صور (AI Generated)</span>
                   </div>
                   <div className="p-4">
                     <WordImages word={query} />
-                    <a href={`https://unsplash.com/s/photos/${encodeURIComponent(query)}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="text-[#1a73e8] text-xs font-cairo mt-3 inline-block hover:underline">
-                      عرض المزيد من الصور ←
-                    </a>
                   </div>
                 </div>
               )}
@@ -480,30 +529,27 @@ export default function ToolsPage() {
                       <p className="text-gray-400 text-sm font-cairo">لا توجد أخبار متاحة حالياً لهذه الكلمة</p>
                     </div>
                   ) : (
-                    <div>
-                      {(activeTab === 'all' ? news.slice(0, 4) : news).map((item, i, arr) => (
-                        <div key={i}>
-                          <a href={item.url} target="_blank" rel="noopener noreferrer"
-                            className="flex gap-3 p-4 hover:bg-[#f8f9fa] transition-colors group">
-                            <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                              {safeHostname(item.url) && (
-                                <img
-                                  src={`https://www.google.com/s2/favicons?domain=${safeHostname(item.url)}&sz=32`}
-                                  alt=""
-                                  className="w-6 h-6 object-contain"
-                                  onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                />
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-xs text-gray-400 font-cairo mb-0.5">{item.source.name}</p>
-                              <p className="text-sm font-medium text-[#202124] group-hover:text-[#1a73e8] line-clamp-2 dir-ltr transition-colors" dir="ltr">
-                                {item.title}
-                              </p>
-                            </div>
-                          </a>
-                          {i < arr.length - 1 && <NewsDivider />}
-                        </div>
+                    <div className="divide-y divide-gray-50">
+                      {(activeTab === 'all' ? news.slice(0, 4) : news).map((item, i) => (
+                        <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
+                          className="flex gap-3 p-4 hover:bg-[#f8f9fa] transition-colors group">
+                          <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            {safeHostname(item.url) && (
+                              <img
+                                src={`https://www.google.com/s2/favicons?domain=${safeHostname(item.url)}&sz=32`}
+                                alt=""
+                                className="w-6 h-6 object-contain"
+                                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs text-gray-400 font-cairo mb-0.5">{item.source.name}</p>
+                            <p className="text-sm font-medium text-[#202124] group-hover:text-[#1a73e8] line-clamp-2 dir-ltr transition-colors" dir="ltr">
+                              {item.title}
+                            </p>
+                          </div>
+                        </a>
                       ))}
                     </div>
                   )}
