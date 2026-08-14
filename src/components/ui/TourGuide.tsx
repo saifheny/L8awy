@@ -36,6 +36,7 @@ export default function TourGuide() {
         nextBtnText: 'التالي ➔',
         prevBtnText: '⬅ السابق',
         progressText: '{{current}} من {{total}}',
+        popoverClass: 'driverjs-theme',
         steps: [
           {
             element: '#tour-logo',
@@ -81,7 +82,7 @@ export default function TourGuide() {
       });
       
       driverObj.drive();
-    }, 1500);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [pathname, isClient]);

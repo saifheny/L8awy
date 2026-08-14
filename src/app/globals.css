@@ -118,3 +118,68 @@ body::after {
   background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* ========================
+   DRIVER.JS CUSTOM THEME
+   ======================== */
+.driverjs-theme {
+  font-family: 'Cairo', sans-serif !important;
+  border-radius: 1rem !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3) !important;
+  background-color: #ffffff !important;
+}
+
+.driverjs-theme .driver-popover-title {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: #111827 !important;
+  margin-bottom: 0.5rem !important;
+  font-family: 'Cairo', sans-serif !important;
+}
+
+.driverjs-theme .driver-popover-description {
+  font-size: 0.95rem !important;
+  color: #4b5563 !important;
+  line-height: 1.6 !important;
+  font-family: 'Cairo', sans-serif !important;
+}
+
+.driverjs-theme .driver-popover-progress-text {
+  font-size: 0.8rem !important;
+  color: #9ca3af !important;
+  font-weight: 700 !important;
+  font-family: 'Cairo', sans-serif !important;
+}
+
+.driverjs-theme .driver-popover-footer button {
+  font-family: 'Cairo', sans-serif !important;
+  font-weight: 700 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.4rem 1rem !important;
+  transition: all 0.2s !important;
+}
+
+.driverjs-theme .driver-popover-next-btn,
+.driverjs-theme .driver-popover-done-btn {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  text-shadow: none !important;
+  border: none !important;
+}
+
+.driverjs-theme .driver-popover-next-btn:hover,
+.driverjs-theme .driver-popover-done-btn:hover {
+  background-color: #2563eb !important;
+  transform: scale(1.05) !important;
+}
+
+.driverjs-theme .driver-popover-prev-btn {
+  color: #6b7280 !important;
+  background: transparent !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.driverjs-theme .driver-popover-prev-btn:hover {
+  background: #f3f4f6 !important;
+}

@@ -48,9 +48,19 @@ export default function Footer() {
 
       </div>
 
-      <div className="mt-12 pt-6 border-t border-gray-100/50 text-center relative z-10">
-        <p className="text-gray-400 text-[10px] font-cairo tracking-widest uppercase">
-          © 2026 LOGHAWY PLATFORM. ALL RIGHTS RESERVED.
+      <div className="mt-12 pt-8 border-t border-gray-100/50 text-center relative z-10 flex flex-col items-center justify-center">
+        <h2 className="text-4xl md:text-5xl font-aref font-bold mb-4" style={{
+          background: 'linear-gradient(to right, #3b82f6, #ec4899, #f59e0b)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          textShadow: '0px 4px 20px rgba(236, 72, 153, 0.2)'
+        }}>
+          لغوي
+        </h2>
+        <p className="text-gray-400 text-xs md:text-sm font-cairo tracking-widest uppercase flex items-center gap-2">
+          <span>© 2026 LOGHAWY PLATFORM.</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+          <span>BUILT FOR THE FUTURE.</span>
         </p>
       </div>
     </footer>
