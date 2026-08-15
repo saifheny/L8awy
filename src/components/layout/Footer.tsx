@@ -6,10 +6,9 @@ import { IoHome, IoPeople, IoWallet, IoPerson } from 'react-icons/io5';
 
 export default function Footer() {
   const pathname = usePathname();
-  // Show brand only on home and course pages
+  // The large footer belongs to course discovery and course pages only.
   const showBrand = pathname === '/' || pathname.startsWith('/course/');
-  // Hide entire footer on tools page
-  if (pathname === '/tools') return null;
+  if (!showBrand) return null;
 
   return (
     <footer className="mt-auto border-t border-gray-100 bg-white/70 backdrop-blur-2xl pb-28 md:pb-12 pt-12 relative overflow-hidden">

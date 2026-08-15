@@ -103,7 +103,7 @@ export default function BottomBar({ isSubscribed }: BottomBarProps) {
       {/* ══════════ BOTTOM NAV BAR — clean pill shape ══════════ */}
       <motion.div
         initial={{ y: 100 }}
-        animate={{ y: teachersOpen ? 150 : 0 }}
+        animate={{ y: teachersOpen ? 'calc(100% + 32px)' : 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 26 }}
         className="fixed bottom-0 left-4 right-4 z-40 mb-3"
         dir="rtl"
