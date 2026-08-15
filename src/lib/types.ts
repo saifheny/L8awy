@@ -8,6 +8,7 @@ export interface User {
   createdAt: number | Date;
   walletBalance: number;
   role?: string;
+  commentsDisabled?: boolean;
 }
 
 export interface Course {
@@ -24,6 +25,27 @@ export interface Course {
   durationMonths: number;
   language: string;
   color?: string;
+  /** Controlled from the admin panel. Closed courses stay hidden from students. */
+  isOpen?: boolean;
+  /** Optional larger image for the course landing page. */
+  coverImage?: string;
+}
+
+export interface PromotionSettings {
+  enabled: boolean;
+  title: string;
+  description: string;
+  referralReward: number;
+}
+
+export interface CourseComment {
+  id: string;
+  courseId: string;
+  userId: string;
+  userName: string;
+  text: string;
+  createdAt: string | Date | number | { toDate: () => Date } | undefined;
+  replies?: Reply[];
 }
 
 export interface Reply {

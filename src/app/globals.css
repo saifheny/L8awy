@@ -205,3 +205,20 @@ body::after {
 .driverjs-theme .driver-popover-prev-btn:hover {
   background: #f3f4f6 !important;
 }
+
+.input {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.7rem 0.85rem;
+  color: #1f2937;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 12%);
+}

@@ -195,7 +195,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isSubscribed = await isSubscribedToCourse(courseId);
     if (isSubscribed) return true;
 
-    const courseObj = courses.find(c => c.id === courseId);
+    const managedCourse = await getDoc(doc(db, 'courses', courseId));
+    const courseObj = managedCourse.exists()
+      ? ({ id: managedCourse.id, ...managedCourse.data() } as typeof courses[number])
+      : courses.find(c => c.id === courseId);
     if (!courseObj) return false;
 
     const price = courseObj.price;
@@ -210,7 +213,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Create subscription
       const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 2); // 2 months duration
+      endDate.setMonth(endDate.getMonth() + (courseObj.durationMonths || 2));
 
       await addDoc(collection(db, 'subscriptions'), {
         userId: user.uid,
@@ -233,11 +236,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const referrerId = referrerDocSnap.id;
             const referrerRef = doc(db, 'users', referrerId);
             const currentBal = referrerDocSnap.data().walletBalance || 0;
-            await updateDoc(referrerRef, { walletBalance: currentBal + 25 });
+            const promotion = await getDoc(doc(db, 'platformSettings', 'home'));
+            const referralReward = Number(promotion.data()?.referralReward ?? 25);
+            await updateDoc(referrerRef, { walletBalance: currentBal + referralReward });
             
             await addDoc(collection(db, 'transactions'), {
               userId: referrerId,
-              amount: 25,
+              amount: referralReward,
               type: 'referral_reward',
               status: 'approved',
               timestamp: serverTimestamp(),

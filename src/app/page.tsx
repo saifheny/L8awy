@@ -11,9 +11,9 @@ import LanguageModal from '@/components/home/LanguageModal';
 import SubscribeModal from '@/components/home/SubscribeModal';
 import WalletModal from '@/components/home/WalletModal';
 import PurchaseModal from '@/components/home/PurchaseModal';
-import { courses } from '@/data/courses';
 import { useRouter } from 'next/navigation';
 import type { Course } from '@/lib/types';
+import { usePlatformCourses, usePromotionSettings } from '@/hooks/usePlatformContent';
 
 export default function Home() {
   const { user, loading: authLoading, subscribeToCourse, chargeWallet, isSubscribedToCourse } = useAuth();
@@ -28,6 +28,8 @@ export default function Home() {
   const [checkingSubscriptions, setCheckingSubscriptions] = useState(true);
   const [filterLang, setFilterLang] = useState<string>('en');
   const [showReferralBanner, setShowReferralBanner] = useState(true);
+  const { courses, loading: coursesLoading } = usePlatformCourses();
+  const promotion = usePromotionSettings();
 
   // Language mapping
   const langMap: Record<string, string> = {
@@ -65,23 +67,23 @@ export default function Home() {
   }, [authLoading, user, fetchSubscriptions]);
 
   const handleCourseClick = (courseId: string) => {
-    router.push(`/course/${courseId}`);
+    router.push(`/course?courseId=${encodeURIComponent(courseId)}`);
   };
 
   const handleCourseCardClick = (courseId?: string) => {
     if (!user) {
-      if (courseId) router.push(`/course/${courseId}`);
+      if (courseId) router.push(`/course?courseId=${encodeURIComponent(courseId)}`);
       else setSubscribeModalOpen(true);
       return;
     }
     if (courseId) {
-      router.push(`/course/${courseId}`);
+      router.push(`/course?courseId=${encodeURIComponent(courseId)}`);
     } else {
       router.push(`/course/${filterLang}-comprehensive`);
     }
   };
 
-  const filteredCourses = courses.filter(c => c.language === filterLang);
+  const filteredCourses = courses.filter(c => c.language === filterLang && c.isOpen !== false);
 
   const languages = [
     { id: 'en', label: 'الإنجليزية' },
@@ -97,7 +99,7 @@ export default function Home() {
         onLanguageClick={() => !user && setLanguageModalOpen(true)}
       />
 
-      {authLoading || checkingSubscriptions ? (
+      {authLoading || checkingSubscriptions || coursesLoading ? (
         <div className="max-w-7xl mx-auto mt-8">
           <div className="h-6 skeleton-shimmer rounded w-32 mb-6 mx-auto" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -149,7 +151,7 @@ export default function Home() {
             
             {/* Referral Banner */}
             <AnimatePresence>
-              {user && showReferralBanner && (
+              {user && showReferralBanner && promotion.enabled && (
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -168,8 +170,8 @@ export default function Home() {
                       <IoGiftOutline size={28} />
                     </div>
                     <div className="flex-1 text-right">
-                      <h3 className="font-bold font-cairo text-lg leading-tight">اكسب 25 ج.م الآن!</h3>
-                      <p className="text-sm font-cairo text-white/90">ادعُ أصدقاءك للاشتراك واحصل على مكافأة فورية</p>
+                      <h3 className="font-bold font-cairo text-lg leading-tight">{promotion.title}</h3>
+                      <p className="text-sm font-cairo text-white/90">{promotion.description}</p>
                     </div>
                     <IoArrowForward size={20} className="rotate-180" />
                   </div>

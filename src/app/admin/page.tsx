@@ -10,13 +10,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { teachersData } from '@/data/teachers';
 import { courses } from '@/data/courses';
+import ContentManager from '@/components/admin/ContentManager';
 
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   // Tabs state
-  const [activeTab, setActiveTab] = useState<'wallet' | 'users' | 'chats'>('wallet');
+  const [activeTab, setActiveTab] = useState<'wallet' | 'users' | 'chats' | 'content'>('wallet');
 
   // Transactions State
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
@@ -305,7 +306,7 @@ export default function AdminPage() {
         />
 
         {/* Tabs Navigation */}
-        <div className="flex bg-white rounded-2xl shadow-sm border border-gray-100 p-2 mb-8 w-full max-w-2xl">
+        <div className="flex flex-wrap bg-white rounded-2xl shadow-sm border border-gray-100 p-2 mb-8 w-full max-w-3xl">
           <button 
             onClick={() => setActiveTab('wallet')}
             className={`flex-1 py-3 px-4 rounded-xl font-bold font-cairo flex items-center justify-center gap-2 transition-all ${activeTab === 'wallet' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
@@ -323,6 +324,12 @@ export default function AdminPage() {
             className={`flex-1 py-3 px-4 rounded-xl font-bold font-cairo flex items-center justify-center gap-2 transition-all ${activeTab === 'chats' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <IoChatbubbles size={20} /> المحادثات
+          </button>
+          <button
+            onClick={() => setActiveTab('content')}
+            className={`flex-1 py-3 px-4 rounded-xl font-bold font-cairo flex items-center justify-center gap-2 transition-all ${activeTab === 'content' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <IoPeople size={20} /> إدارة المنصة
           </button>
         </div>
 
@@ -526,6 +533,8 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        {activeTab === 'content' && <ContentManager users={users} notify={showToast} />}
 
       </div>
     </div>

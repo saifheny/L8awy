@@ -16,17 +16,17 @@ import { useState, useEffect } from 'react';
 import { fetchPlaylistVideos } from '@/lib/youtube';
 
 export default function CourseCard({ course, isLocked, onClick }: CourseCardProps) {
-  const [thumbnailUrl, setThumbnailUrl] = useState<string>('');
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>(course.image || '');
 
   useEffect(() => {
     async function loadThumbnail() {
       const videos = await fetchPlaylistVideos(course.playlistId);
-      if (videos.length > 0 && videos[0].thumbnail) {
+      if (!course.image && videos.length > 0 && videos[0].thumbnail) {
         setThumbnailUrl(videos[0].thumbnail);
       }
     }
     loadThumbnail();
-  }, [course.playlistId]);
+  }, [course.playlistId, course.image]);
 
   const isComprehensive = course.level === 'شامل';
   
@@ -110,7 +110,7 @@ export default function CourseCard({ course, isLocked, onClick }: CourseCardProp
       {isLocked ? (
         <CardContent />
       ) : (
-        <Link href={`/course/${course.id}`} className="block h-full">
+        <Link href={`/course?courseId=${encodeURIComponent(course.id)}`} className="block h-full">
           <CardContent />
         </Link>
       )}
