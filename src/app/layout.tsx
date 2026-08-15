@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'لغوي - منصة تعلم اللغات الأولى',
     description: 'كورس شامل لتعلم الإنجليزية، الألمانية، والتركية من الصفر بأحدث طرق التعليم التفاعلية.',
-    url: 'https://saifheny.github.io/poo',
+    url: 'https://saifheny.github.io/L8awy',
     siteName: 'Loghawy Platform',
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: 'كورس شامل لتعلم الإنجليزية، الألمانية، والتركية من الصفر.',
     images: ['https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png'],
   },
-  manifest: '/poo/manifest.json',
+  manifest: '/L8awy/manifest.json',
 };
 
 import Script from 'next/script';
@@ -56,7 +56,7 @@ export default function RootLayout({
           {`
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/poo/sw.js').then(function(registration) {
+                navigator.serviceWorker.register('/L8awy/sw.js').then(function(registration) {
                   console.log('ServiceWorker registration successful with scope: ', registration.scope);
                 }, function(err) {
                   console.log('ServiceWorker registration failed: ', err);

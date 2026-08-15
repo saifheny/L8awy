@@ -38,7 +38,7 @@ export default function BottomBar({ isSubscribed }: BottomBarProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm"
               onClick={() => setTeachersOpen(false)}
             />
 
@@ -49,7 +49,7 @@ export default function BottomBar({ isSubscribed }: BottomBarProps) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="fixed left-0 right-0 z-50 bg-white flex flex-col overflow-hidden shadow-2xl"
+              className="fixed left-0 right-0 z-[110] bg-white flex flex-col overflow-hidden shadow-2xl"
               style={{
                 bottom: '0',
                 borderRadius: '24px 24px 0 0',
