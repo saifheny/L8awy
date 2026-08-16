@@ -81,7 +81,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
         <h2 className="font-aref font-bold text-2xl text-gray-900">التعليقات والأسئلة</h2>
       </div>
       <div className="flex gap-3 items-start mb-6">
-        <div className="w-9 h-9 rounded-full bg-gray-100 grid place-items-center shrink-0"><IoPerson className="text-gray-400" /></div>
+        <img src="/L8awy/brand/student-comment-avatar.png" alt="صورة الطالب" className="w-10 h-10 shrink-0 object-contain" />
         <div className="flex-1">
           <textarea value={text} onChange={(event) => setText(event.target.value)} disabled={!isSubscribed || user?.commentsDisabled} placeholder={isSubscribed ? 'أضف تعليقًا أو سؤالًا...' : 'اشترك أولًا لكتابة تعليق'} className="w-full min-h-24 p-3 rounded-xl border border-gray-200 bg-white font-cairo text-sm focus:outline-none focus:border-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed" />
           <div className="flex items-center justify-between mt-2">
@@ -94,7 +94,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
         {comments.length === 0 ? <p className="p-7 text-center text-gray-400 font-cairo text-sm">لا توجد تعليقات حتى الآن.</p> : comments.map((comment) => (
           <article key={comment.id} className="p-4">
             <div className="flex gap-3">
-              <Avatar name={comment.userName} color="#64748b" />
+              <img src="/L8awy/brand/student-comment-avatar.png" alt={`صورة ${comment.userName}`} className="w-10 h-10 shrink-0 object-contain" />
               <div className="flex-1"><div className="flex gap-2 items-center"><strong className="font-cairo text-sm">{comment.userName}</strong><span className="text-xs text-gray-400">{dateLabel(comment.createdAt)}</span></div><p className="mt-1 bg-white rounded-2xl rounded-tr-none px-3 py-2 inline-block text-sm text-gray-700">{comment.text}</p></div>
             </div>
             {(comment.replies || []).map((reply: Reply) => (

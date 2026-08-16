@@ -77,7 +77,7 @@ function RegisterForm() {
 
           <div className="relative z-10">
             <div className="w-20 h-20 bg-white rounded-full mx-auto flex items-center justify-center shadow-lg mb-5 border-4 border-white mt-4">
-              <IoPerson className="text-4xl text-blue-500" />
+              <img src="/L8awy/brand/auth-mark.png" alt="تسجيل آمن" className="w-14 h-14 object-contain" />
             </div>
 
             <h2 className="text-2xl font-bold font-cairo text-gray-900 mb-2">تم إنشاء حسابك بنجاح!</h2>
@@ -117,7 +117,7 @@ function RegisterForm() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="w-16 h-16 bg-blue-50 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-blue-100">
-            <IoPerson className="text-blue-500 text-3xl" />
+            <img src="/L8awy/brand/auth-mark.png" alt="تسجيل الدخول أو إنشاء حساب" className="w-12 h-12 object-contain" />
           </div>
           <h1 className="text-2xl font-bold font-cairo text-gray-900 mb-1">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}

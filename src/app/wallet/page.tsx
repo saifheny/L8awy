@@ -337,7 +337,7 @@ export default function WalletPage() {
             >
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay"></div>
               <div className="relative z-10">
-                <IoGiftOutline className="text-6xl mx-auto mb-4 drop-shadow-md" />
+                <img src="/L8awy/brand/referral-gift.png" alt="مكافأة دعوة صديق" className="h-24 w-24 mx-auto mb-3 object-contain drop-shadow-2xl" />
                 <h2 className="text-2xl font-black font-cairo mb-2">ادعُ أصدقاءك واربح!</h2>
                 <p className="text-white/90 font-cairo text-lg mb-1">لكل صديق يشترك عن طريق رابطك</p>
                 <p className="text-4xl font-black mt-2 mb-4">{promotion.referralReward} <span className="text-xl">جنيه مصري</span></p>
