@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 const cairo = Cairo({ subsets: ['arabic'], variable: '--font-body' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://saifheny.github.io/L8awy/'),
   title: 'لغوي - المنصة الأفضل لتعلم الإنجليزية، الألمانية، التركية',
   description: 'منصة لغوي (Loghawy) هي خيارك الأول لتعلم اللغات من الصفر وحتى الاحتراف. كورسات شاملة في الإنجليزية، الألمانية، والتركية، مع نخبة من أفضل المدرسين.',
   keywords: 'تعلم لغات, كورسات إنجليزي, كورسات ألماني, كورسات تركي, منصة تعليمية, تعليم اونلاين, لغوي, Loghawy, English course, German course, Turkish course',
@@ -24,10 +25,10 @@ export const metadata: Metadata = {
     siteName: 'Loghawy Platform',
     images: [
       {
-        url: 'https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png',
+        url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png',
         width: 800,
         height: 600,
-        alt: 'Loghawy Platform Logo',
+        alt: 'شعار منصة لغوي',
       },
     ],
     locale: 'ar_EG',
@@ -37,7 +38,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'لغوي - المنصة الأفضل لتعلم اللغات',
     description: 'كورس شامل لتعلم الإنجليزية، الألمانية، والتركية من الصفر.',
-    images: ['https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png'],
+    images: ['https://saifheny.github.io/L8awy/brand/platform-mark.png'],
+  },
+  icons: {
+    icon: [{ url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png', type: 'image/png' }],
+    apple: [{ url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png', type: 'image/png' }],
   },
   manifest: '/L8awy/manifest.json',
 };

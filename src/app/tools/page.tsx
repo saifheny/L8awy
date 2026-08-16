@@ -15,6 +15,7 @@ interface NewsItem { title: string; url: string; source: { name: string }; publi
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const safeHostname = (url: string) => { try { return new URL(url).hostname; } catch { return ''; } };
+const discoverMark = '/L8awy/brand/discover-assistant.png';
 
 async function fetchDict(word: string): Promise<WordResult | null> {
   try {
@@ -453,11 +454,12 @@ export default function ToolsPage() {
                     <div className="h-40 w-full overflow-hidden bg-gray-100 relative">
                       <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                      <img src={discoverMark} alt="" aria-hidden="true" className="absolute top-2 right-2 h-10 w-10 object-contain drop-shadow-md" />
                     </div>
                   )}
                   <div className="p-4 flex-1 flex flex-col">
                     <p className="text-xs text-gray-400 font-cairo mb-2 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                      <img src={discoverMark} alt="" aria-hidden="true" className="h-5 w-5 object-contain" />
                       {item.source.name}
                     </p>
                     <h3 className="text-sm font-bold text-gray-800 group-hover:text-[#1a73e8] transition-colors leading-relaxed mb-3 flex-1" dir="rtl">
@@ -673,16 +675,7 @@ export default function ToolsPage() {
                       {(activeTab === 'all' ? news.slice(0, 4) : news).map((item, i) => (
                         <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
                           className="flex gap-3 p-4 hover:bg-blue-50/30 transition-colors group">
-                          <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center justify-center flex-shrink-0 overflow-hidden">
-                            {safeHostname(item.url) && (
-                              <img
-                                src={`https://www.google.com/s2/favicons?domain=${safeHostname(item.url)}&sz=32`}
-                                alt=""
-                                className="w-5 h-5 object-contain opacity-80 group-hover:opacity-100 transition-opacity"
-                                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                              />
-                            )}
-                          </div>
+                          <img src={discoverMark} alt="" aria-hidden="true" className="w-10 h-10 object-contain flex-shrink-0" />
                           <div className="min-w-0 flex-1">
                             <p className="text-xs text-gray-400 font-cairo mb-0.5">{item.source.name}</p>
                             <p className="text-sm font-medium text-[#202124] group-hover:text-[#1a73e8] line-clamp-2 dir-ltr transition-colors leading-relaxed" dir="ltr">

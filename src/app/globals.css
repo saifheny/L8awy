@@ -223,45 +223,24 @@ body::after {
   box-shadow: 0 0 0 3px rgb(59 130 246 / 12%);
 }
 
-@keyframes wallet-ring-spin {
-  to { transform: rotate(360deg); }
+@keyframes wallet-label-breathe {
+  0%, 18%, 82%, 100% { opacity: 0; transform: translateX(8px); max-width: 0; }
+  30%, 70% { opacity: 1; transform: translateX(0); max-width: 7em; }
 }
 
-@keyframes wallet-typing {
-  0%, 13% { max-width: 0; opacity: 0; }
-  28%, 52% { max-width: 6em; opacity: 1; }
-  64%, 100% { max-width: 0; opacity: 0; }
-}
-
-.wallet-ring {
-  width: 30px;
-  height: 30px;
-  padding: 2px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: conic-gradient(#4285f4, #34a853, #fbbc05, #ea4335, #4285f4);
-  animation: wallet-ring-spin 5s linear infinite;
-}
-
-.wallet-core {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  place-items: center;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 92%);
-}
-
-.wallet-type {
-  display: block;
+.wallet-brand-name {
+  display: flex;
+  direction: rtl;
   max-width: 0;
   overflow: hidden;
   white-space: nowrap;
-  color: #2563eb;
   font-family: 'Cairo', sans-serif;
   font-size: 0.9rem;
-  font-weight: 800;
-  border-left: 2px solid #2563eb;
-  animation: wallet-typing 9s steps(7, end) infinite;
+  font-weight: 900;
+  animation: wallet-label-breathe 9s ease-in-out infinite;
 }
+
+.wallet-brand-name span:nth-child(4n + 1) { color: #4285f4; }
+.wallet-brand-name span:nth-child(4n + 2) { color: #34a853; }
+.wallet-brand-name span:nth-child(4n + 3) { color: #fbbc05; }
+.wallet-brand-name span:nth-child(4n) { color: #ea4335; }

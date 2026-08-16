@@ -1,17 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoSearch } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FloatingAIAssistant() {
   const { user } = useAuth();
   const pathname = usePathname();
+  const [expanded, setExpanded] = useState(false);
 
   const isVisible = user && pathname === '/';
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const timer = window.setTimeout(() => setExpanded((value) => !value), expanded ? 5000 : 10000);
+    return () => window.clearTimeout(timer);
+  }, [expanded, isVisible]);
 
   return (
     <AnimatePresence>
@@ -25,20 +31,31 @@ export default function FloatingAIAssistant() {
         >
           <Link href="/tools">
             <motion.div
-              initial={{ width: 48, opacity: 0 }}
-              animate={{ width: 188, opacity: 1 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              className="animated-border rounded-full shadow-[0_8px_30px_rgba(66,133,244,0.25)] hover:shadow-[0_8px_30px_rgba(66,133,244,0.4)] transition-shadow overflow-hidden"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="flex h-12 items-center gap-2 overflow-visible"
             >
-              <div className="bg-white rounded-full h-[46px] px-[11px] flex items-center justify-start gap-2.5 whitespace-nowrap">
-                <span className="w-7 h-7 rounded-full bg-blue-50 grid place-items-center"><IoSearch size={16} className="text-[#4285F4] flex-shrink-0" /></span>
-                
-                <div className="relative h-5 flex-1 min-w-[100px] overflow-hidden">
-                  <span className="absolute inset-0 text-xs font-bold font-cairo text-gray-700 flex items-center">
+              <motion.img
+                src="/L8awy/brand/discover-assistant.png"
+                alt="اسأل وترجم واكتشف"
+                className="h-12 w-12 shrink-0 object-contain drop-shadow-[0_7px_10px_rgba(234,88,12,0.22)]"
+                animate={{ rotate: expanded ? [0, -4, 0] : 0, scale: expanded ? 1.04 : 1 }}
+                transition={{ duration: 0.45 }}
+              />
+              <AnimatePresence initial={false}>
+                {expanded && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0, x: -8 }}
+                    animate={{ opacity: 1, width: 'auto', x: 0 }}
+                    exit={{ opacity: 0, width: 0, x: -8 }}
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                    className="overflow-hidden whitespace-nowrap font-cairo text-xs font-black text-slate-700 drop-shadow-sm"
+                  >
                     اسأل · ترجم · اكتشف
-                  </span>
-                </div>
-              </div>
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </motion.div>
           </Link>
         </motion.div>

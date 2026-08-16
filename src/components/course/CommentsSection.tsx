@@ -98,7 +98,20 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
               <div className="flex-1"><div className="flex gap-2 items-center"><strong className="font-cairo text-sm">{comment.userName}</strong><span className="text-xs text-gray-400">{dateLabel(comment.createdAt)}</span></div><p className="mt-1 bg-white rounded-2xl rounded-tr-none px-3 py-2 inline-block text-sm text-gray-700">{comment.text}</p></div>
             </div>
             {(comment.replies || []).map((reply: Reply) => (
-              <div key={reply.id} className="mr-10 mt-3 flex gap-2"><Avatar name={reply.userName} color="#2563eb" /><div><div className="flex gap-2 items-center"><strong className="text-xs">{reply.userName}</strong><span className="text-[10px] text-blue-600 bg-blue-50 rounded px-1.5">مدرس</span></div><p className="mt-1 bg-blue-50 border border-blue-100 rounded-2xl rounded-tr-none px-3 py-2 text-sm text-gray-700">{reply.text}</p></div></div>
+              <div key={reply.id} className="mr-10 mt-3 flex gap-2">
+                {reply.role === 'support' ? (
+                  <img src="/L8awy/brand/support-avatar.png" alt="الدعم الفني" className="h-10 w-10 shrink-0 object-contain" />
+                ) : (
+                  <Avatar name={reply.userName} color="#2563eb" />
+                )}
+                <div>
+                  <div className="flex gap-2 items-center">
+                    <strong className="text-xs">{reply.userName}</strong>
+                    <span className={`text-[10px] rounded px-1.5 ${reply.role === 'support' ? 'text-sky-700 bg-sky-50' : 'text-blue-600 bg-blue-50'}`}>{reply.role === 'support' ? 'دعم فني' : 'مدرس'}</span>
+                  </div>
+                  <p className={`mt-1 border rounded-2xl rounded-tr-none px-3 py-2 text-sm text-gray-700 ${reply.role === 'support' ? 'bg-sky-50 border-sky-100' : 'bg-blue-50 border-blue-100'}`}>{reply.text}</p>
+                </div>
+              </div>
             ))}
           </article>
         ))}

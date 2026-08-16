@@ -3,8 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoWallet, IoLanguage, IoPerson, IoSettings } from 'react-icons/io5';
-import GlassButton from '@/components/ui/GlassButton';
+import { IoPerson } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TopBarProps {
@@ -39,11 +38,11 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
           <motion.button
             id="tour-wallet"
             onClick={user ? onWalletClick : onSubscribeClick}
-            className="relative px-3 h-12 rounded-xl flex items-center justify-center gap-2 bg-white/80 hover:bg-white text-gray-800 transition-colors pointer-events-auto shadow-sm overflow-visible"
+            className="relative h-12 flex items-center justify-center gap-2 bg-transparent hover:opacity-90 text-gray-800 transition-opacity pointer-events-auto overflow-visible"
             title={user ? "المحفظة" : "الاشتراك"}
           >
-            <motion.span animate={walletNotice ? { scale: [1, 1.28, 1] } : { scale: 1 }} transition={{ duration: 0.5 }} className="wallet-ring"><span className="wallet-core"><IoWallet size={21} className="text-blue-600" /></span></motion.span>
-            <span className="wallet-type">محفظتي</span>
+            <motion.img animate={walletNotice ? { scale: [1, 1.2, 1] } : { scale: 1 }} transition={{ duration: 0.5 }} src="/L8awy/brand/wallet-mark.png" alt="محفظتي" className="h-11 w-11 object-contain" />
+            <span className="wallet-brand-name" aria-label="محفظتي"><span>م</span><span>ح</span><span>ف</span><span>ظ</span><span>ت</span><span>ي</span></span>
             <AnimatePresence>{walletNotice && <motion.span initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5 }} className="absolute top-full right-0 mt-2 rounded-xl bg-emerald-600 text-white px-3 py-2 whitespace-nowrap text-xs font-cairo font-bold shadow-lg">تمت إضافة رصيد لمحفظتك ✨</motion.span>}</AnimatePresence>
           </motion.button>
         </div>
@@ -78,10 +77,10 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             <button
               id="tour-lang-selector"
               onClick={onLanguageClick}
-              className="w-12 h-12 rounded-xl flex items-center justify-center bg-white/80 hover:bg-white text-gray-700 transition-colors shadow-sm"
+              className="w-12 h-12 flex items-center justify-center bg-transparent hover:opacity-85 transition-opacity"
               title="تغيير اللغة"
             >
-              <IoLanguage size={24} className="text-gray-600" />
+              <img src="/L8awy/brand/platform-mark.png" alt="لغوي" className="w-12 h-12 object-contain" />
             </button>
           )}
         </div>
