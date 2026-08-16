@@ -44,7 +44,7 @@ function ManagedCourseContent() {
     isSubscribedToCourse(courseId).then(setIsSubscribed);
   }, [authLoading, user, courseId, isSubscribedToCourse]);
 
-  if (checking || authLoading) return <div className="min-h-screen p-10 text-center font-cairo text-gray-500">جارٍ تحميل الكورس...</div>;
+  if (checking || authLoading) return <main className="min-h-screen bg-slate-100 px-4 pt-6 pb-24 dir-rtl"><div className="mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200"><div className="h-64 animate-pulse bg-slate-300 sm:h-80" /><div className="space-y-4 bg-slate-100 p-6"><div className="h-8 w-2/3 animate-pulse rounded-lg bg-slate-300" /><div className="h-4 w-full animate-pulse rounded-lg bg-slate-200" /><div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><div className="h-20 animate-pulse rounded-2xl bg-slate-200" /><div className="h-20 animate-pulse rounded-2xl bg-slate-200" /><div className="h-20 animate-pulse rounded-2xl bg-slate-200" /><div className="h-20 animate-pulse rounded-2xl bg-slate-200" /></div></div></div></main>;
   if (!course) return <div className="min-h-screen p-10 text-center font-cairo text-gray-500">لم يتم العثور على الكورس.</div>;
 
   const blocked = course.isOpen === false;
@@ -87,11 +87,11 @@ function ManagedCourseContent() {
             </div>
             <div className="grid grid-cols-2 gap-3 mt-6 lg:grid-cols-4 lg:gap-4">
               {[
-                { icon: IoPlayCircle, title: 'دروس فيديو', text: 'محتوى مرتب داخل الكورس', color: 'text-blue-600 bg-blue-50' },
-                { icon: IoDocumentText, title: `${course.examCount} امتحان`, text: 'اختبر مستواك وتابع تقدمك', color: 'text-emerald-600 bg-emerald-50' },
-                { icon: IoSchool, title: `${course.teacherCount} مدرس`, text: 'دعم وإجابات على الأسئلة', color: 'text-violet-600 bg-violet-50' },
-                { icon: IoChatbubbles, title: 'مجتمع الكورس', text: 'تعليقات وأسئلة الطلاب', color: 'text-orange-600 bg-orange-50' },
-              ].map((item) => <div key={item.title} className="overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br from-white via-white to-slate-50 shadow-sm p-3.5 sm:p-5"><div className={`w-10 h-10 rounded-xl grid place-items-center ${item.color}`}><item.icon size={22} /></div><h3 className="font-cairo font-bold text-sm text-gray-900 mt-3 sm:mt-4 sm:text-base">{item.title}</h3><p className="font-cairo text-[11px] text-gray-500 mt-1 leading-5 sm:text-xs">{item.text}</p></div>)}
+                { icon: IoPlayCircle, title: 'دروس فيديو', text: 'محتوى مرتب داخل الكورس', color: 'text-blue-600', surface: 'from-blue-50 via-white to-violet-50' },
+                { icon: IoDocumentText, title: `${course.examCount} امتحان`, text: 'اختبر مستواك وتابع تقدمك', color: 'text-emerald-600', surface: 'from-emerald-50 via-white to-cyan-50' },
+                { icon: IoSchool, title: `${course.teacherCount} مدرس`, text: 'دعم وإجابات على الأسئلة', color: 'text-violet-600', surface: 'from-violet-50 via-white to-pink-50' },
+                { icon: IoChatbubbles, title: 'مجتمع الكورس', text: 'تعليقات وأسئلة الطلاب', color: 'text-orange-600', surface: 'from-amber-50 via-white to-rose-50' },
+              ].map((item) => <div key={item.title} className={`overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br ${item.surface} shadow-sm p-3.5 sm:p-5`}><div className={`w-10 h-10 rounded-xl grid place-items-center bg-white/80 shadow-sm ${item.color}`}><item.icon size={22} /></div><h3 className="font-cairo font-bold text-sm text-gray-900 mt-3 sm:mt-4 sm:text-base">{item.title}</h3><p className="font-cairo text-[11px] text-gray-500 mt-1 leading-5 sm:text-xs">{item.text}</p></div>)}
             </div>
             <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 flex gap-3 items-start"><IoLockClosed className="text-blue-600 mt-0.5 shrink-0" /><p className="font-cairo text-sm text-blue-900 leading-6">المعاينة والتعليقات متاحة لك الآن، أما الفيديوهات والامتحانات وكتابة التعليقات فتُفتح بعد الاشتراك.</p></div>
           </>

@@ -78,14 +78,20 @@ export interface CourseComment {
   text: string;
   createdAt: string | Date | number | { toDate: () => Date } | undefined;
   replies?: Reply[];
+  reactions?: Record<string, number>;
+  reactionByUser?: Record<string, string>;
+  editedAt?: string | Date | number | { toDate: () => Date } | undefined;
 }
 
 export interface Reply {
   id: string;
   userName: string;
-  role: 'teacher' | 'support';
+  role: 'teacher' | 'support' | 'student';
   text: string;
   timestamp: string | Date | number;
+  userId?: string;
+  parentReplyId?: string;
+  isPrivate?: boolean;
 }
 
 export interface Comment {

@@ -93,7 +93,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="pt-24 pb-32 min-h-screen px-4 md:px-8 relative">
+    <main className="pt-40 pb-32 min-h-screen px-4 md:px-8 relative md:pt-44">
       <TopBar
         onWalletClick={() => user ? router.push('/wallet') : setSubscribeModalOpen(true)}
         onSubscribeClick={() => setSubscribeModalOpen(true)}

@@ -6,12 +6,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { IoArrowBack, IoLogOutOutline, IoCopyOutline, IoCheckmarkCircle, IoPersonOutline, IoWalletOutline, IoPerson, IoBookOutline, IoTrophyOutline } from 'react-icons/io5';
 import CourseCard from '@/components/home/CourseCard';
 import { usePlatformCourses } from '@/hooks/usePlatformContent';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, logout, isSubscribedToCourse } = useAuth();
   const [copied, setCopied] = useState(false);
   const [subscribedCourses, setSubscribedCourses] = useState<any[]>([]);
+  const [editingName, setEditingName] = useState(false);
+  const [nextName, setNextName] = useState('');
+  const [nameNotice, setNameNotice] = useState('');
   const { courses } = usePlatformCourses();
 
   useEffect(() => {
@@ -47,6 +52,18 @@ export default function ProfilePage() {
     router.push('/register');
   };
 
+  const saveName = async () => {
+    const name = nextName.trim();
+    if (!name) return setNameNotice('اكتب الاسم أولًا.');
+    const stored = (user as any).lastDisplayNameChange;
+    const lastChange = stored?.toMillis ? stored.toMillis() : Number(stored || 0);
+    const wait = 7 * 24 * 60 * 60 * 1000;
+    if (lastChange && Date.now() - lastChange < wait) return setNameNotice('يمكن تغيير الاسم مرة واحدة كل 7 أيام.');
+    await updateDoc(doc(db, 'users', user.uid), { displayName: name, lastDisplayNameChange: Date.now() });
+    setNameNotice('تم حفظ الاسم. حدّث الصفحة ليظهر في كل أجزاء الحساب.');
+    setEditingName(false);
+  };
+
   return (
     <div className="min-h-screen bg-transparent dir-rtl pb-20 pt-4">
       {/* Header */}
@@ -69,7 +86,7 @@ export default function ProfilePage() {
           <div className="absolute -top-16 -left-10 w-56 h-56 rounded-full bg-blue-400/20" />
           <div className="relative flex flex-col md:flex-row items-center gap-6">
             <div className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-blue-300 to-violet-500 shadow-2xl border-4 border-white/20 flex shrink-0 items-center justify-center"><IoPerson className="text-white text-6xl" /></div>
-            <div className="flex-1 text-center md:text-right"><p className="font-cairo text-blue-200 text-sm">مرحبًا بك في لغوي</p><h2 className="text-3xl font-aref font-bold mt-1">{user.displayName}</h2><p dir="ltr" className="font-cairo text-sm text-white/70 mt-2">{user.phone}</p><div className="flex flex-wrap gap-2 justify-center md:justify-start mt-5"><button onClick={() => router.push('/wallet')} className="bg-white text-slate-900 rounded-xl px-4 py-2 font-cairo font-bold text-sm flex items-center gap-2"><IoWalletOutline className="text-emerald-600" />{user.walletBalance || 0} ج.م</button><span className="rounded-xl bg-white/10 border border-white/15 px-4 py-2 font-cairo text-sm flex items-center gap-2"><IoBookOutline />{subscribedCourses.length} كورساتي</span><span className="rounded-xl bg-white/10 border border-white/15 px-4 py-2 font-cairo text-sm flex items-center gap-2"><IoTrophyOutline />ابدأ إنجازًا جديدًا</span></div></div>
+            <div className="flex-1 text-center md:text-right"><p className="font-cairo text-blue-200 text-sm">مرحبًا بك في لغوي</p><h2 className="text-3xl font-aref font-bold mt-1">{user.displayName}</h2><p dir="ltr" className="font-cairo text-sm text-white/70 mt-2">{user.phone}</p><button onClick={() => { setEditingName((value) => !value); setNextName(user.displayName); setNameNotice(''); }} className="mt-3 text-xs font-cairo font-bold text-blue-100 underline underline-offset-4">تعديل الاسم</button>{editingName && <div className="mt-3 flex flex-col gap-2 sm:flex-row"><input value={nextName} onChange={(event) => setNextName(event.target.value)} className="min-w-0 flex-1 rounded-xl border border-white/20 bg-white/10 px-3 py-2 font-cairo text-sm text-white outline-none placeholder:text-white/50" placeholder="الاسم الجديد" /><button onClick={saveName} className="rounded-xl bg-white px-4 py-2 font-cairo text-sm font-bold text-slate-900">حفظ</button></div>}{nameNotice && <p className="mt-2 font-cairo text-xs text-amber-200">{nameNotice}</p>}<div className="flex flex-wrap gap-2 justify-center md:justify-start mt-5"><button onClick={() => router.push('/wallet')} className="bg-white text-slate-900 rounded-xl px-4 py-2 font-cairo font-bold text-sm flex items-center gap-2"><IoWalletOutline className="text-emerald-600" />{user.walletBalance || 0} ج.م</button><span className="rounded-xl bg-white/10 border border-white/15 px-4 py-2 font-cairo text-sm flex items-center gap-2"><IoBookOutline />{subscribedCourses.length} كورساتي</span><span className="rounded-xl bg-white/10 border border-white/15 px-4 py-2 font-cairo text-sm flex items-center gap-2"><IoTrophyOutline />ابدأ إنجازًا جديدًا</span></div></div>
             <button onClick={handleLogout} className="self-start md:self-auto flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-red-500 border border-white/15 text-white font-cairo text-sm rounded-xl transition-colors"><IoLogOutOutline size={20} />تسجيل الخروج</button>
           </div>
           {user.loginCode && <div className="relative mt-7 rounded-2xl bg-black/20 border border-white/10 p-3 flex flex-wrap items-center gap-3"><span className="font-cairo text-sm text-white/70">كود دخولك:</span><strong className="font-mono tracking-widest text-white" dir="ltr">{user.loginCode}</strong><button onClick={copyCode} className="mr-auto bg-white/10 hover:bg-white/20 rounded-lg p-2">{copied ? <IoCheckmarkCircle className="text-emerald-300" /> : <IoCopyOutline />}</button></div>}

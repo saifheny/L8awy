@@ -89,14 +89,11 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             <button
               id="tour-lang-selector"
               onClick={onLanguageClick}
-              className="fixed top-3 left-3 z-50 rounded-full p-[2px] shadow-[0_8px_22px_rgba(66,133,244,0.22)] transition-transform hover:scale-[1.02] md:top-4 md:left-4"
-              style={{ background: 'linear-gradient(90deg, #4285f4 0%, #34a853 34%, #fbbc05 67%, #ea4335 100%)' }}
+              className="fixed top-3 left-3 z-50 flex h-14 items-center gap-2 bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
               title="تغيير اللغة"
             >
-              <span className="flex h-11 items-center gap-1.5 rounded-full bg-white/95 py-1 pl-1.5 pr-3 font-cairo text-xs font-black text-slate-700 md:h-12 md:gap-2 md:pr-4 md:text-sm">
-                <span>اختيار اللغة</span>
-                <img src="/L8awy/brand/language-mark.png" alt="" aria-hidden="true" className="h-8 w-8 object-contain md:h-9 md:w-9" />
-              </span>
+              <img src="/L8awy/brand/language-mark.png" alt="اختيار اللغة" className="h-14 w-14 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
+              <span className="language-brand-name" aria-label="اختيار اللغة"><span>ا</span><span>خ</span><span>ت</span><span>ي</span><span>ا</span><span>ر</span><span>&nbsp;</span><span>ا</span><span>ل</span><span>ل</span><span>غ</span><span>ة</span></span>
             </button>
           )}
         </div>

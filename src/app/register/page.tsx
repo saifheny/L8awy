@@ -21,6 +21,7 @@ function RegisterForm() {
   const [error, setError] = useState('');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [showQuickGuide, setShowQuickGuide] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     const langParam = searchParams?.get('lang');
@@ -33,6 +34,12 @@ function RegisterForm() {
     const reveal = window.setTimeout(() => setShowQuickGuide(true), 250);
     const dismiss = window.setTimeout(() => setShowQuickGuide(false), 7000);
     return () => { window.clearTimeout(reveal); window.clearTimeout(dismiss); };
+  }, [isLogin]);
+
+  useEffect(() => {
+    if (!isLogin) return;
+    const savedCode = localStorage.getItem('loghawy_saved_login_code');
+    if (savedCode) { setLoginCodeInput(savedCode); setRememberMe(true); }
   }, [isLogin]);
 
   // If user is already logged in, redirect to home
@@ -49,6 +56,8 @@ function RegisterForm() {
     try {
       if (isLogin) {
         await login(loginCodeInput);
+        if (rememberMe) localStorage.setItem('loghawy_saved_login_code', loginCodeInput.trim());
+        else localStorage.removeItem('loghawy_saved_login_code');
         router.push('/');
       } else {
         // Validate Egyptian Phone Number
@@ -122,7 +131,7 @@ function RegisterForm() {
       <div className="w-full max-w-md mt-16 md:mt-24">
         {/* Header */}
         <div className="mb-8 text-center">
-          <img src="/L8awy/brand/auth-mark.png" alt="تسجيل الدخول أو إنشاء حساب" className="w-16 h-16 mx-auto mb-4 object-contain drop-shadow-md" />
+          <img src="/L8awy/brand/auth-mark.png" alt="تسجيل الدخول أو إنشاء حساب" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-lg" />
           <h1 className="text-2xl font-bold font-cairo text-gray-900 mb-1">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
           </h1>
@@ -147,7 +156,7 @@ function RegisterForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <AnimatePresence mode="wait"><motion.form key={isLogin ? 'login' : 'register'} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.28 }} onSubmit={handleSubmit} className="space-y-4">
           {isLogin ? (
             <div className="relative">
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -162,6 +171,7 @@ function RegisterForm() {
                 className="w-full bg-gray-50 border-2 border-gray-200 p-4 pr-12 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-gray-900 font-bold font-cairo transition-all text-left"
                 dir="ltr"
               />
+              <label className="mt-3 flex cursor-pointer items-center gap-2 font-cairo text-xs text-gray-600"><input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="h-4 w-4 accent-blue-600" />تذكّرني على هذا الجهاز</label>
             </div>
           ) : (
             <>
@@ -234,7 +244,7 @@ function RegisterForm() {
           >
             {isLoading ? 'جاري التحميل...' : (isLogin ? 'تسجيل الدخول' : 'إنشاء الحساب')}
           </button>
-        </form>
+        </motion.form></AnimatePresence>
 
         <div className="mt-6 text-center border-t border-gray-100 pt-5">
           <button
