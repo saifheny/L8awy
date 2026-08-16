@@ -224,8 +224,8 @@ body::after {
 }
 
 @keyframes wallet-label-breathe {
-  0%, 18%, 82%, 100% { opacity: 0; transform: translateX(8px); max-width: 0; }
-  30%, 70% { opacity: 1; transform: translateX(0); max-width: 7em; }
+  0%, 35%, 90%, 100% { opacity: 0; transform: translateX(8px); max-width: 0; }
+  48%, 78% { opacity: 1; transform: translateX(0); max-width: 7em; }
 }
 
 .wallet-brand-name {
@@ -237,7 +237,7 @@ body::after {
   font-family: 'Cairo', sans-serif;
   font-size: 0.9rem;
   font-weight: 900;
-  animation: wallet-label-breathe 9s ease-in-out infinite;
+  animation: wallet-label-breathe 8s ease-in-out infinite;
 }
 
 .wallet-brand-name span:nth-child(4n + 1) { color: #4285f4; }

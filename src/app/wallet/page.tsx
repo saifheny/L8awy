@@ -148,29 +148,40 @@ export default function WalletPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 mt-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 mt-5 space-y-6 md:mt-8 md:space-y-8">
         
         {/* Balance Card */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-950 via-blue-900 to-indigo-700 rounded-[2rem] p-5 md:p-8 shadow-xl relative overflow-hidden">
+          <div className="absolute -top-16 -left-12 h-56 w-56 rounded-full bg-cyan-300/20 blur-2xl" />
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay"></div>
-          <p className="text-lg font-cairo text-white/90 font-bold relative z-10">الرصيد المتاح</p>
-          <h2 className="text-5xl font-black font-cairo text-white mt-2 relative z-10 drop-shadow-md">
-            {user.walletBalance || 0} <span className="text-2xl font-bold">ج.م</span>
-          </h2>
+          <div className="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-cairo text-white/70 font-bold">الرصيد المتاح</p>
+              <h2 className="text-4xl md:text-5xl font-black font-cairo text-white mt-1 drop-shadow-md">
+                {user.walletBalance || 0} <span className="text-lg md:text-2xl font-bold">ج.م</span>
+              </h2>
+              <p className="mt-2 text-xs font-cairo text-cyan-100/80">رصيدك جاهز للاشتراك والشحن.</p>
+            </div>
+            <img src="/L8awy/brand/wallet-mark.png" alt="محفظتي" className="h-20 w-20 object-contain drop-shadow-2xl md:h-24 md:w-24" />
+          </div>
+          <div className="relative z-10 mt-5 grid grid-cols-2 gap-2 border-t border-white/15 pt-4 text-center font-cairo">
+            <div className="rounded-2xl bg-white/10 px-3 py-2.5"><p className="text-lg font-black text-white">{transactions.length}</p><p className="text-[11px] text-white/70">حركة بالمحفظة</p></div>
+            <div className="rounded-2xl bg-white/10 px-3 py-2.5"><p className="text-lg font-black text-white">{referrals.length}</p><p className="text-[11px] text-white/70">دعوات أصدقاء</p></div>
+          </div>
         </div>
 
         {/* Wallet Tabs */}
-        <div className="flex gap-3 bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100">
+        <div className="flex gap-2 rounded-2xl bg-white/75 p-1.5 shadow-sm border border-gray-100 backdrop-blur-sm md:gap-3">
           <button
             onClick={() => setActiveWalletTab('charge')}
-            className={`flex-1 py-3 rounded-xl font-bold font-cairo text-sm transition-all flex items-center justify-center gap-2 ${activeWalletTab === 'charge' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-3 rounded-xl font-bold font-cairo text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${activeWalletTab === 'charge' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <IoWalletOutline size={18} />
             شحن المحفظة
           </button>
           <button
             onClick={() => setActiveWalletTab('referral')}
-            className={`flex-1 py-3 rounded-xl font-bold font-cairo text-sm transition-all flex items-center justify-center gap-2 ${activeWalletTab === 'referral' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex-1 py-3 rounded-xl font-bold font-cairo text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${activeWalletTab === 'referral' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <IoPersonAddOutline size={18} />
             ادعُ أصدقاءك

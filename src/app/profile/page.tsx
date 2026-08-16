@@ -75,6 +75,18 @@ export default function ProfilePage() {
           {user.loginCode && <div className="relative mt-7 rounded-2xl bg-black/20 border border-white/10 p-3 flex flex-wrap items-center gap-3"><span className="font-cairo text-sm text-white/70">كود دخولك:</span><strong className="font-mono tracking-widest text-white" dir="ltr">{user.loginCode}</strong><button onClick={copyCode} className="mr-auto bg-white/10 hover:bg-white/20 rounded-lg p-2">{copied ? <IoCheckmarkCircle className="text-emerald-300" /> : <IoCopyOutline />}</button></div>}
         </section>
 
+        <section className="grid grid-cols-2 gap-3 md:grid-cols-3">
+          <button onClick={() => router.push('/wallet')} className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-4 text-right transition-transform active:scale-[.98]">
+            <IoWalletOutline className="text-2xl text-emerald-600" /><p className="mt-3 font-cairo text-xl font-black text-slate-900">{user.walletBalance || 0} ج.م</p><p className="text-xs font-cairo text-slate-500">رصيد المحفظة</p>
+          </button>
+          <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 p-4">
+            <IoBookOutline className="text-2xl text-violet-600" /><p className="mt-3 font-cairo text-xl font-black text-slate-900">{subscribedCourses.length}</p><p className="text-xs font-cairo text-slate-500">كورساتي النشطة</p>
+          </div>
+          <div className="col-span-2 rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-rose-50 p-4 md:col-span-1">
+            <IoTrophyOutline className="text-2xl text-amber-600" /><p className="mt-3 font-cairo text-sm font-black text-slate-900">رحلتك التعليمية</p><p className="text-xs font-cairo text-slate-500">ابدأ درسًا جديدًا اليوم</p>
+          </div>
+        </section>
+
         {/* Subscribed Courses */}
         <div>
           <h3 className="text-2xl font-aref font-bold text-gray-900 mb-6 border-r-4 border-purple-500 pr-3 mt-12">
@@ -92,7 +104,7 @@ export default function ProfilePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
               {subscribedCourses.map(c => (
                 <CourseCard 
                   key={c.id} 

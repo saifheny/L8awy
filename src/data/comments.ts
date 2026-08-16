@@ -17,7 +17,7 @@ function buildComments(
   const teacher = lang === 'en' ? enT : lang === 'de' ? deT : trT;
   const langLabel = lang === 'en' ? 'الإنجليزي' : lang === 'de' ? 'الألماني' : 'التركي';
 
-  return [
+  const comments: Comment[] = [
     {
       id: `${prefix}1`, courseId, userName: 'عمر عبد العزيز', userAvatar: '#3b82f6',
       text: `الكورس ده بجد مفيد جداً بدأت أفهم حاجات كانت صعبة عليا من زمان في ${langLabel} شكرا يا مستر`,
@@ -97,6 +97,23 @@ function buildComments(
       replies: [{ id: `${prefix}13r`, userName: teacher(1), role: 'teacher', text: 'شكراً يا وسام ترشيحاتكم بتحمسنا نقدم أحسن', timestamp: '2026-08-11T14:00:00Z' }]
     },
   ];
+
+  const extraStudents = ['محمود سامي', 'شهد علي', 'زياد حاتم', 'ملك محمد', 'كريم طارق', 'نوران أحمد', 'يوسف أشرف', 'هنا وليد', 'علي حسام', 'سارة ممدوح', 'إسلام رجب'];
+  const extraComments: Comment[] = extraStudents.map((userName, index) => ({
+    id: `${prefix}extra-${index + 1}`,
+    courseId,
+    userName,
+    userAvatar: ['#0ea5e9', '#ec4899', '#f97316', '#8b5cf6', '#14b8a6'][index % 5],
+    text: index % 2 === 0
+      ? `بدأت أتابع كورس ${langLabel} من أيام قليلة، وترتيب الدروس مريح جدًا. هل في مراجعة بعد كل وحدة؟`
+      : `محتوى ${langLabel} واضح والتطبيقات ساعدتني أفهم بسرعة. شكرًا لفريق لغوي.`,
+    timestamp: `2026-08-${12 + index}T${10 + (index % 8)}:00:00Z`,
+    replies: index % 3 === 1
+      ? [{ id: `${prefix}extra-${index + 1}r`, userName: support, role: 'support', text: 'أهلًا بك، ستجد مراجعات واختبارات تساعدك على تثبيت كل وحدة.', timestamp: `2026-08-${12 + index}T${11 + (index % 8)}:00:00Z` }]
+      : [{ id: `${prefix}extra-${index + 1}r`, userName: teacher(index), role: 'teacher', text: 'مبسوطين بتقدمك، كمل بالتدريج وراجع الأمثلة أولًا بأول.', timestamp: `2026-08-${12 + index}T${11 + (index % 8)}:00:00Z` }],
+  }));
+
+  return [...comments, ...extraComments];
 }
 
 export const courseComments: Record<string, Comment[]> = {

@@ -83,12 +83,18 @@ export default function CourseDetailsPage() {
     tr: { accent: '#ef4444', glow: 'rgba(239,68,68,0.3)', shadow: '#b91c1c' },
   };
   const colors = colorMap[course.language] || colorMap.en;
+  const courseStats = [
+    { icon: IoPlayCircle, value: `${course.examCount * 5}+`, label: 'فيديو', className: 'from-blue-50 via-white to-indigo-50 border-blue-100 text-blue-700' },
+    { icon: IoDocumentText, value: course.examCount, label: 'امتحان', className: 'from-amber-50 via-white to-rose-50 border-amber-100 text-amber-700' },
+    { icon: IoPeople, value: course.teacherCount, label: 'مدرسين', className: 'from-violet-50 via-white to-fuchsia-50 border-violet-100 text-violet-700' },
+    { icon: IoTime, value: course.durationMonths, label: 'شهور تعلم', className: 'from-emerald-50 via-white to-cyan-50 border-emerald-100 text-emerald-700' },
+  ];
 
   return (
     <main className="min-h-screen dir-rtl pt-4 pb-24 overflow-x-hidden" style={{ background: 'transparent' }}>
 
       {/* ======================== HERO HEADER ======================== */}
-      <div className="relative w-full" style={{ height: 'min(480px, 70vw)' }}>
+      <div className="relative mx-3 overflow-hidden rounded-b-[2rem] sm:mx-6 sm:rounded-b-[3rem]" style={{ height: 'min(480px, 70vw)' }}>
         {/* Background Image - blurred by default, clear only when subscribed */}
         <img
           src={coverImage}
@@ -172,24 +178,15 @@ export default function CourseDetailsPage() {
         </div>
 
         {/* Course Stats Info (Moved below image) */}
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-3 mb-8 pb-6 border-b border-gray-100">
-          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
-            <IoStar className="text-yellow-400 text-lg" />
-            <span className="font-bold text-gray-900">4.9</span> 
-            <span className="text-xs">(320 تقييم)</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
-            <IoPeople className="text-lg" style={{ color: colors.accent }} />
-            <span><strong className="text-gray-900">{course.teacherCount}</strong> مدرس</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
-            <IoDocumentText className="text-green-500 text-lg" />
-            <span><strong className="text-gray-900">{course.examCount}</strong> امتحان</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600 font-cairo text-sm">
-            <IoTime className="text-purple-500 text-lg" />
-            <span><strong className="text-gray-900">{course.durationMonths}</strong> أشهر</span>
-          </div>
+        <div className="grid grid-cols-2 gap-2 mb-8 pb-6 border-b border-gray-100 sm:grid-cols-4 sm:gap-3">
+          {courseStats.map((stat) => (
+            <div key={stat.label} className={`relative overflow-hidden rounded-2xl border bg-gradient-to-br p-3 font-cairo ${stat.className}`}>
+              <div className="absolute -top-5 -left-5 h-14 w-14 rounded-full bg-white/70 blur-sm" />
+              <stat.icon className="relative text-lg" />
+              <p className="relative mt-1 text-xl font-black text-gray-900">{stat.value}</p>
+              <p className="relative text-[11px] font-bold text-gray-600">{stat.label}</p>
+            </div>
+          ))}
         </div>
 
         {/* If subscribed: show tabs + tab content */}

@@ -38,7 +38,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
           <motion.button
             id="tour-wallet"
             onClick={user ? onWalletClick : onSubscribeClick}
-            className="relative h-12 flex items-center justify-center gap-2 bg-transparent hover:opacity-90 text-gray-800 transition-opacity pointer-events-auto overflow-visible"
+            className="fixed top-3 right-3 z-50 h-12 flex items-center justify-center gap-2 bg-transparent hover:opacity-90 text-gray-800 transition-opacity pointer-events-auto overflow-visible md:top-4 md:right-4"
             title={user ? "المحفظة" : "الاشتراك"}
           >
             <motion.img animate={walletNotice ? { scale: [1, 1.2, 1] } : { scale: 1 }} transition={{ duration: 0.5 }} src="/L8awy/brand/wallet-mark.png" alt="محفظتي" className="h-11 w-11 object-contain" />

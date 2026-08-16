@@ -15,7 +15,7 @@ export default function FloatingAIAssistant() {
 
   useEffect(() => {
     if (!isVisible) return;
-    const timer = window.setTimeout(() => setExpanded((value) => !value), expanded ? 5000 : 10000);
+    const timer = window.setTimeout(() => setExpanded((value) => !value), 5000);
     return () => window.clearTimeout(timer);
   }, [expanded, isVisible]);
 

@@ -48,7 +48,7 @@ export default function CourseCard({ course, isLocked, onClick }: CourseCardProp
           : `4px 4px 0 0 ${colors.shadow}`
       }}
     >
-      <div className="relative h-48 w-full bg-gray-50 flex items-center justify-center overflow-hidden p-3 border-b border-gray-100">
+      <div className="relative h-36 w-full bg-gray-50 flex items-center justify-center overflow-hidden p-2.5 border-b border-gray-100 sm:h-48 sm:p-3">
         {thumbnailUrl ? (
           <img src={thumbnailUrl} alt={course.title} className={`w-full h-full object-cover rounded-2xl shadow-sm transition-all duration-500 ${isLocked ? 'blur-[4px] scale-105' : 'group-hover:scale-105'}`} />
         ) : (
@@ -67,15 +67,15 @@ export default function CourseCard({ course, isLocked, onClick }: CourseCardProp
         )}
       </div>
 
-      <div className="p-5 flex-1 flex flex-col bg-white">
-        <h3 className={`font-aref font-bold text-gray-900 mb-3 text-right dir-rtl leading-relaxed ${isComprehensive ? 'text-3xl' : 'text-2xl'}`} style={isComprehensive ? { color: colors.base } : {}}>{course.title}</h3>
-        <div className="mt-auto flex justify-between items-center text-sm font-cairo text-gray-700 dir-rtl font-bold mb-4">
-          <span className="bg-transparent border border-gray-200 px-3 py-1.5 rounded-lg">👨‍🏫 {course.teacherCount} مدرس</span>
-          <span className="bg-transparent border border-gray-200 px-3 py-1.5 rounded-lg">📝 {course.examCount} امتحان</span>
+      <div className="p-3.5 flex-1 flex flex-col bg-white sm:p-5">
+        <h3 className={`font-aref font-bold text-gray-900 mb-3 text-right dir-rtl leading-relaxed ${isComprehensive ? 'text-xl sm:text-3xl' : 'text-lg sm:text-2xl'}`} style={isComprehensive ? { color: colors.base } : {}}>{course.title}</h3>
+        <div className="mt-auto grid grid-cols-2 gap-2 text-[11px] sm:text-sm font-cairo text-gray-700 dir-rtl font-bold mb-3 sm:mb-4">
+          <span className="bg-gradient-to-br from-blue-50 via-white to-violet-50 border border-blue-100 px-2 py-1.5 rounded-lg text-center">👨‍🏫 {course.teacherCount} مدرس</span>
+          <span className="bg-gradient-to-br from-amber-50 via-white to-rose-50 border border-amber-100 px-2 py-1.5 rounded-lg text-center">📝 {course.examCount} امتحان</span>
         </div>
         <div className="pt-4 border-t-2 border-gray-100 flex justify-between items-center dir-rtl">
           {!isLocked ? (
-            <span className="text-xl font-black text-white px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors w-full text-center" style={{ backgroundColor: colors.base }}>
+            <span className="text-base sm:text-xl font-black text-white px-4 sm:px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors w-full text-center" style={{ backgroundColor: colors.base }}>
               دخول الكورس
             </span>
           ) : (

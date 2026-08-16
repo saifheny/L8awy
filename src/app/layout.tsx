@@ -21,11 +21,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'لغوي - منصة تعلم اللغات الأولى',
     description: 'كورس شامل لتعلم الإنجليزية، الألمانية، والتركية من الصفر بأحدث طرق التعليم التفاعلية.',
-    url: 'https://saifheny.github.io/L8awy',
+    url: 'https://saifheny.github.io/L8awy/',
     siteName: 'Loghawy Platform',
     images: [
       {
-        url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png',
+        url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png?v=20260816',
         width: 800,
         height: 600,
         alt: 'شعار منصة لغوي',
@@ -38,11 +38,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'لغوي - المنصة الأفضل لتعلم اللغات',
     description: 'كورس شامل لتعلم الإنجليزية، الألمانية، والتركية من الصفر.',
-    images: ['https://saifheny.github.io/L8awy/brand/platform-mark.png'],
+    images: ['https://saifheny.github.io/L8awy/brand/platform-mark.png?v=20260816'],
   },
   icons: {
-    icon: [{ url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png', type: 'image/png' }],
-    apple: [{ url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png', type: 'image/png' }],
+    icon: [{ url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png?v=20260816', type: 'image/png' }],
+    apple: [{ url: 'https://saifheny.github.io/L8awy/brand/platform-mark.png?v=20260816', type: 'image/png' }],
   },
   manifest: '/L8awy/manifest.json',
 };
