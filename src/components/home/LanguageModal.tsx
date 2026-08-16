@@ -21,8 +21,12 @@ export default function LanguageModal({ isOpen, onClose, onSelect }: LanguageMod
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="اختر اللغة اللي عايز تتعلمها">
+    <Modal isOpen={isOpen} onClose={onClose}>
       <div className="space-y-4 mt-6 dir-rtl">
+        <div className="flex items-center justify-between gap-4 border-b border-white/20 pb-4">
+          <div className="text-right"><h2 className="font-aref text-2xl font-bold text-white">اختيار اللغة</h2><p className="mt-1 text-xs text-white/75">اختر اللغة التي تريد أن تبدأ بها</p></div>
+          <img src="/L8awy/brand/language-mark.png" alt="اختيار اللغة" className="h-16 w-16 object-contain" />
+        </div>
         {languages.map((lang, idx) => (
           <motion.div
             key={lang.id}

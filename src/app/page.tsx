@@ -121,7 +121,7 @@ export default function Home() {
           <div className="mb-10 flex flex-col items-center">
             <motion.img
               id="tour-logo"
-              src="/L8awy/brand/platform-mark.png"
+              src="https://i.postimg.cc/15BZXVCN/d42a254cb5f9f120bc8582cad00ac03d.png"
               alt="منصتنا التعليمية"
               className="h-36 md:h-48 w-auto object-contain mb-4 select-none"
               draggable={false}
