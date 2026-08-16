@@ -7,6 +7,7 @@ import { defaultPromotion, usePlatformCourses } from '@/hooks/usePlatformContent
 import { teachersData } from '@/data/teachers';
 import type { Course, CourseComment, PromotionSettings, User } from '@/lib/types';
 import { IoMegaphone, IoPeople, IoSchool, IoSend, IoWallet } from 'react-icons/io5';
+import StudentControls from '@/components/admin/StudentControls';
 
 const blankCourse: Course = { id: '', title: '', description: '', level: 'مبتدئ', playlistId: '', image: '', coverImage: '', teacherCount: 1, examCount: 0, price: 0, durationMonths: 1, language: 'en', color: '#3b82f6', isOpen: true };
 
@@ -114,6 +115,8 @@ export default function ContentManager({ users, notify }: { users: ManagedUser[]
     </section>
 
     <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 md:p-7"><h2 className="font-cairo font-bold text-xl flex gap-2 items-center mb-5"><IoWallet className="text-emerald-600" />الطلاب: المحفظة والتعليقات</h2><div className="space-y-3">{users.map((student) => <div key={student.id} className="border border-gray-100 rounded-2xl p-4 flex flex-wrap items-center gap-3"><div className="min-w-40 flex-1"><p className="font-cairo font-bold">{student.displayName || 'بدون اسم'}</p><p className="text-xs text-gray-500" dir="ltr">{student.phone || student.id}</p></div><span className="font-bold text-emerald-600">{student.walletBalance || 0} ج.م</span><input id={`amount-${student.id}`} type="number" placeholder="+ / - مبلغ" className="input w-28" /><button onClick={() => adjustWallet(student, Number((document.getElementById(`amount-${student.id}`) as HTMLInputElement)?.value))} className="px-3 py-2 bg-emerald-600 text-white rounded-xl text-sm font-cairo">تعديل الرصيد</button><button onClick={() => toggleComments(student)} className={`px-3 py-2 rounded-xl text-sm font-cairo ${student.commentsDisabled ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700'}`}>{student.commentsDisabled ? 'السماح بالتعليقات' : 'منع التعليقات'}</button></div>)}</div></section>
+
+    <StudentControls users={users} notify={notify} />
 
     <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 md:p-7"><h2 className="font-cairo font-bold text-xl mb-5">أسئلة وتعليقات الكورسات</h2><div className="flex gap-3 items-center mb-5"><label className="font-cairo text-sm">الرد باسم:</label><select value={teacherId} onChange={(e) => setTeacherId(e.target.value)} className="input max-w-xs">{teachersData.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name}</option>)}</select></div><div className="space-y-4">{comments.length === 0 ? <p className="text-gray-400 font-cairo">لا توجد تعليقات حتى الآن.</p> : comments.map((comment) => <article key={comment.id} className="border border-gray-100 rounded-2xl p-4"><p className="font-cairo font-bold text-sm">{comment.userName}</p><p className="font-cairo text-gray-700 mt-1">{comment.text}</p><div className="mt-3 flex gap-2"><input value={reply[comment.id] || ''} onChange={(e) => setReply({ ...reply, [comment.id]: e.target.value })} placeholder="اكتب الرد باسم المدرس المختار" className="input flex-1" /><button onClick={() => sendReply(comment)} className="bg-blue-600 text-white rounded-xl px-4"><IoSend /></button></div></article>)}</div></section>
   </div>;

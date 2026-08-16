@@ -12,7 +12,7 @@ import VideoSection from '@/components/course/VideoSection';
 import ExamSection from '@/components/course/ExamSection';
 import CommentsSection from '@/components/course/CommentsSection';
 import PurchaseModal from '@/components/home/PurchaseModal';
-import { IoArrowBack, IoDocumentText, IoLockClosed, IoPeople, IoPlayCircle, IoTime } from 'react-icons/io5';
+import { IoArrowBack, IoChatbubbles, IoDocumentText, IoLockClosed, IoPeople, IoPlayCircle, IoSchool, IoStar, IoTime } from 'react-icons/io5';
 
 export default function ManagedCoursePage() {
   return <Suspense fallback={<div className="min-h-screen p-10 text-center font-cairo text-gray-500">جارٍ تحميل الكورس...</div>}><ManagedCourseContent /></Suspense>;
@@ -74,12 +74,28 @@ function ManagedCourseContent() {
         {blocked ? (
           <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-center font-cairo text-red-700">هذا الكورس مغلق مؤقتًا من الإدارة.</div>
         ) : !isSubscribed ? (
-          <div className="rounded-3xl bg-white border border-gray-100 shadow-sm p-8 text-center">
-            <IoLockClosed className="mx-auto text-4xl text-blue-600 mb-3" />
-            <h2 className="font-cairo font-bold text-xl text-gray-900">اشترك لفتح محتوى الكورس</h2>
-            <p className="font-cairo text-gray-500 mt-2">السعر: {course.price === 0 ? 'مجاني' : `${course.price} ج.م`}</p>
-            <button onClick={openPurchase} className="mt-5 bg-blue-600 hover:bg-blue-700 text-white font-cairo font-bold px-7 py-3 rounded-xl">{course.price === 0 ? 'انضم الآن' : 'اشترك الآن'}</button>
-          </div>
+          <>
+            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-700 via-indigo-700 to-violet-700 text-white shadow-xl p-6 md:p-9">
+              <div className="absolute -top-16 -left-16 w-52 h-52 rounded-full bg-white/10" />
+              <div className="relative grid md:grid-cols-[1fr_auto] gap-6 items-center">
+                <div>
+                  <span className="inline-flex items-center gap-1 bg-white/15 border border-white/20 rounded-full px-3 py-1 text-xs font-cairo"><IoStar className="text-yellow-300" /> تجربة تعلّم متكاملة</span>
+                  <h2 className="font-aref text-3xl md:text-4xl font-bold mt-4">كل أدوات الكورس جاهزة لك</h2>
+                  <p className="font-cairo text-white/85 leading-7 mt-3 max-w-2xl">اشترك مرة واحدة وافتح الفيديوهات والامتحانات وتواصل مع المدرسين واكتب أسئلتك داخل الكورس.</p>
+                </div>
+                <div className="rounded-2xl bg-white/10 border border-white/20 p-5 text-center min-w-44 backdrop-blur-sm"><p className="text-xs font-cairo text-white/70">سعر الاشتراك</p><p className="text-3xl font-black mt-1">{course.price === 0 ? 'مجاني' : `${course.price} ج.م`}</p><button onClick={openPurchase} className="mt-4 w-full bg-white text-blue-700 hover:bg-blue-50 rounded-xl py-3 font-cairo font-bold">{course.price === 0 ? 'انضم الآن' : 'اشترك الآن'}</button></div>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+              {[
+                { icon: IoPlayCircle, title: 'دروس فيديو', text: 'محتوى مرتب داخل الكورس', color: 'text-blue-600 bg-blue-50' },
+                { icon: IoDocumentText, title: `${course.examCount} امتحان`, text: 'اختبر مستواك وتابع تقدمك', color: 'text-emerald-600 bg-emerald-50' },
+                { icon: IoSchool, title: `${course.teacherCount} مدرس`, text: 'دعم وإجابات على الأسئلة', color: 'text-violet-600 bg-violet-50' },
+                { icon: IoChatbubbles, title: 'مجتمع الكورس', text: 'تعليقات وأسئلة الطلاب', color: 'text-orange-600 bg-orange-50' },
+              ].map((item) => <div key={item.title} className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5"><div className={`w-11 h-11 rounded-xl grid place-items-center ${item.color}`}><item.icon size={23} /></div><h3 className="font-cairo font-bold text-gray-900 mt-4">{item.title}</h3><p className="font-cairo text-xs text-gray-500 mt-1 leading-5">{item.text}</p></div>)}
+            </div>
+            <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 flex gap-3 items-start"><IoLockClosed className="text-blue-600 mt-0.5 shrink-0" /><p className="font-cairo text-sm text-blue-900 leading-6">المعاينة والتعليقات متاحة لك الآن، أما الفيديوهات والامتحانات وكتابة التعليقات فتُفتح بعد الاشتراك.</p></div>
+          </>
         ) : (
           <>
             <div className="flex gap-2 mb-6">

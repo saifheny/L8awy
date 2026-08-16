@@ -35,7 +35,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0];
-            setUser({ uid: userDoc.id, ...userDoc.data() } as User);
+            if (userDoc.data().isSuspended) {
+              localStorage.removeItem('userCode');
+            } else {
+              setUser({ uid: userDoc.id, ...userDoc.data() } as User);
+            }
           } else {
             localStorage.removeItem('userCode');
           }
@@ -153,6 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const userDoc = querySnapshot.docs[0];
       const userData = userDoc.data();
+      if (userData.isSuspended) {
+        throw new Error('تم إيقاف هذا الحساب. تواصل مع الإدارة للمساعدة.');
+      }
       localStorage.setItem('userCode', userData.loginCode);
       setUser({ uid: userDoc.id, ...userData } as User);
     } catch (error) {

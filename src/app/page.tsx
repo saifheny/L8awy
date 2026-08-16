@@ -14,6 +14,7 @@ import PurchaseModal from '@/components/home/PurchaseModal';
 import { useRouter } from 'next/navigation';
 import type { Course } from '@/lib/types';
 import { usePlatformCourses, usePromotionSettings } from '@/hooks/usePlatformContent';
+import RegistrationNudge from '@/components/home/RegistrationNudge';
 
 export default function Home() {
   const { user, loading: authLoading, subscribeToCourse, chargeWallet, isSubscribedToCourse } = useAuth();
@@ -191,6 +192,7 @@ export default function Home() {
       )}
 
       {user && <BottomBar />}
+      <RegistrationNudge enabled={!user && !authLoading} />
 
       <LanguageModal 
         isOpen={languageModalOpen} 

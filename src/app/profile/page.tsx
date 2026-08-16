@@ -3,15 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoArrowBack, IoLogOutOutline, IoCopyOutline, IoCheckmarkCircle, IoPersonOutline, IoWalletOutline, IoPerson } from 'react-icons/io5';
-import { courses } from '@/data/courses';
+import { IoArrowBack, IoLogOutOutline, IoCopyOutline, IoCheckmarkCircle, IoPersonOutline, IoWalletOutline, IoPerson, IoBookOutline, IoTrophyOutline } from 'react-icons/io5';
 import CourseCard from '@/components/home/CourseCard';
+import { usePlatformCourses } from '@/hooks/usePlatformContent';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, logout, isSubscribedToCourse } = useAuth();
   const [copied, setCopied] = useState(false);
   const [subscribedCourses, setSubscribedCourses] = useState<any[]>([]);
+  const { courses } = usePlatformCourses();
 
   useEffect(() => {
     if (!user) {
@@ -29,7 +30,7 @@ export default function ProfilePage() {
       setSubscribedCourses(subs);
     }
     loadSubs();
-  }, [user, router, isSubscribedToCourse]);
+  }, [user, router, isSubscribedToCourse, courses]);
 
   if (!user) return null;
 
@@ -64,56 +65,15 @@ export default function ProfilePage() {
 
       <div className="max-w-4xl mx-auto px-4 space-y-6">
         
-        {/* Profile Info Card (No container background now) */}
-        <div className="p-4 flex flex-col md:flex-row items-center gap-8">
-          <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-tr from-yellow-300 via-green-400 to-blue-500 shadow-lg border-4 border-white flex-shrink-0 flex items-center justify-center">
-            <IoPerson className="text-white text-7xl" />
+        <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 text-white p-6 md:p-8 shadow-xl">
+          <div className="absolute -top-16 -left-10 w-56 h-56 rounded-full bg-blue-400/20" />
+          <div className="relative flex flex-col md:flex-row items-center gap-6">
+            <div className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-blue-300 to-violet-500 shadow-2xl border-4 border-white/20 flex shrink-0 items-center justify-center"><IoPerson className="text-white text-6xl" /></div>
+            <div className="flex-1 text-center md:text-right"><p className="font-cairo text-blue-200 text-sm">مرحبًا بك في لغوي</p><h2 className="text-3xl font-aref font-bold mt-1">{user.displayName}</h2><p dir="ltr" className="font-cairo text-sm text-white/70 mt-2">{user.phone}</p><div className="flex flex-wrap gap-2 justify-center md:justify-start mt-5"><button onClick={() => router.push('/wallet')} className="bg-white text-slate-900 rounded-xl px-4 py-2 font-cairo font-bold text-sm flex items-center gap-2"><IoWalletOutline className="text-emerald-600" />{user.walletBalance || 0} ج.م</button><span className="rounded-xl bg-white/10 border border-white/15 px-4 py-2 font-cairo text-sm flex items-center gap-2"><IoBookOutline />{subscribedCourses.length} كورساتي</span><span className="rounded-xl bg-white/10 border border-white/15 px-4 py-2 font-cairo text-sm flex items-center gap-2"><IoTrophyOutline />ابدأ إنجازًا جديدًا</span></div></div>
+            <button onClick={handleLogout} className="self-start md:self-auto flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-red-500 border border-white/15 text-white font-cairo text-sm rounded-xl transition-colors"><IoLogOutOutline size={20} />تسجيل الخروج</button>
           </div>
-          
-          <div className="flex-1 text-center md:text-right">
-            <h2 className="text-3xl font-aref font-bold text-gray-900 mb-2">{user.displayName}</h2>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm font-cairo font-bold text-gray-600 mb-6 mt-4">
-              {user.phone && <span className="bg-gray-100 px-4 py-2 rounded-xl text-lg">{user.phone}</span>}
-              <button 
-                onClick={() => router.push('/wallet')}
-                className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-lg hover:bg-green-200 transition-colors shadow-sm cursor-pointer border border-green-200"
-              >
-                الرصيد: {user.walletBalance} ج.م
-              </button>
-            </div>
-            
-            {user.loginCode && (
-              <div className="flex items-center justify-center md:justify-start gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200 inline-flex">
-                <span className="text-gray-500 text-sm">كود الدخول:</span>
-                <span className="font-black text-gray-900 tracking-widest dir-ltr">{user.loginCode}</span>
-                <button 
-                  onClick={copyCode}
-                  className="ml-2 p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 text-blue-600 transition-colors"
-                >
-                  {copied ? <IoCheckmarkCircle size={20} className="text-green-500" /> : <IoCopyOutline size={20} />}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Decorative floating image below profile info */}
-          <div className="flex justify-center mt-2 mb-2">
-            <img
-              src="https://i.postimg.cc/KcwyMyx5/image-(1).webp"
-              alt=""
-              className="w-48 md:w-56 object-contain select-none drop-shadow-lg"
-              draggable={false}
-            />
-          </div>
-
-          <button 
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors"
-          >
-            <IoLogOutOutline size={24} />
-            تسجيل الخروج
-          </button>
-        </div>
+          {user.loginCode && <div className="relative mt-7 rounded-2xl bg-black/20 border border-white/10 p-3 flex flex-wrap items-center gap-3"><span className="font-cairo text-sm text-white/70">كود دخولك:</span><strong className="font-mono tracking-widest text-white" dir="ltr">{user.loginCode}</strong><button onClick={copyCode} className="mr-auto bg-white/10 hover:bg-white/20 rounded-lg p-2">{copied ? <IoCheckmarkCircle className="text-emerald-300" /> : <IoCopyOutline />}</button></div>}
+        </section>
 
         {/* Subscribed Courses */}
         <div>

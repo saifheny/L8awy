@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Avatar from '@/components/ui/Avatar';
 import { IoPerson, IoSend } from 'react-icons/io5';
 import type { CourseComment, Reply } from '@/lib/types';
+import { courseComments } from '@/data/comments';
 
 function dateLabel(value: CourseComment['createdAt']) {
   const date = typeof value === 'object' && value && 'toDate' in value
@@ -33,11 +34,21 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
 
   useEffect(() => {
     const commentsQuery = query(collection(db, 'courseComments'), where('courseId', '==', courseId));
+    const builtIn = () => (courseComments[courseId] || []).map((comment) => ({
+      id: `sample-${comment.id}`,
+      courseId,
+      userId: 'sample',
+      userName: comment.userName,
+      text: comment.text,
+      createdAt: comment.timestamp,
+      replies: comment.replies,
+    } as CourseComment));
     return onSnapshot(commentsQuery, (snapshot) => {
-      const data = snapshot.docs.map((item) => ({ id: item.id, ...item.data() } as CourseComment));
+      const saved = snapshot.docs.map((item) => ({ id: item.id, ...item.data() } as CourseComment));
+      const data = [...saved, ...builtIn()];
       data.sort((a, b) => timestampValue(b.createdAt) - timestampValue(a.createdAt));
       setComments(data);
-    });
+    }, () => setComments(builtIn()));
   }, [courseId]);
 
   const submit = async () => {

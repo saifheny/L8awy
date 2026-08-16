@@ -9,6 +9,7 @@ export interface User {
   walletBalance: number;
   role?: string;
   commentsDisabled?: boolean;
+  isSuspended?: boolean;
 }
 
 export interface Course {

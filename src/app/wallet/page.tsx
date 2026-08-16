@@ -8,6 +8,7 @@ import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestor
 import { IoArrowBack, IoWalletOutline, IoCheckmarkCircle, IoTimeOutline, IoCloseCircleOutline, IoCopyOutline, IoShareSocialOutline, IoPersonAddOutline, IoGiftOutline } from 'react-icons/io5';
 import type { WalletTransaction } from '@/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePromotionSettings } from '@/hooks/usePlatformContent';
 
 export default function WalletPage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function WalletPage() {
   const [referralCopied, setReferralCopied] = useState(false);
   const [referrals, setReferrals] = useState<any[]>([]);
   const [activeWalletTab, setActiveWalletTab] = useState<'charge' | 'referral'>('charge');
+  const promotion = usePromotionSettings();
 
   const VODAFONE_NUMBER = '01044824232';
 
@@ -121,7 +123,7 @@ export default function WalletPage() {
     switch (status) {
       case 'visited': return { text: 'زار المنصة', color: 'bg-yellow-100 text-yellow-700', icon: '👀' };
       case 'registered': return { text: 'سجل حساب', color: 'bg-blue-100 text-blue-700', icon: '✏️' };
-      case 'subscribed': return { text: 'اشترك! (+25 ج.م)', color: 'bg-green-100 text-green-700', icon: '🎉' };
+      case 'subscribed': return { text: `اشترك! (+${promotion.referralReward} ج.م)`, color: 'bg-green-100 text-green-700', icon: '🎉' };
       default: return { text: 'غير معروف', color: 'bg-gray-100 text-gray-700', icon: '❓' };
     }
   };
@@ -327,7 +329,7 @@ export default function WalletPage() {
                 <IoGiftOutline className="text-6xl mx-auto mb-4 drop-shadow-md" />
                 <h2 className="text-2xl font-black font-cairo mb-2">ادعُ أصدقاءك واربح!</h2>
                 <p className="text-white/90 font-cairo text-lg mb-1">لكل صديق يشترك عن طريق رابطك</p>
-                <p className="text-4xl font-black mt-2 mb-4">25 <span className="text-xl">جنيه مصري</span></p>
+                <p className="text-4xl font-black mt-2 mb-4">{promotion.referralReward} <span className="text-xl">جنيه مصري</span></p>
                 <p className="text-sm text-white/80 font-cairo">المبلغ يُضاف تلقائياً لمحفظتك فور اشتراك صديقك</p>
               </div>
             </motion.div>
