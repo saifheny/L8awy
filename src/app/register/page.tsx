@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { IoPerson, IoCall, IoLanguage, IoMaleFemale, IoCamera, IoArrowBack } from 'react-icons/io5';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function RegisterForm() {
   const router = useRouter();
@@ -19,6 +20,7 @@ function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [showQuickGuide, setShowQuickGuide] = useState(false);
 
   useEffect(() => {
     const langParam = searchParams?.get('lang');
@@ -26,6 +28,12 @@ function RegisterForm() {
     if (langParam === 'de') setLanguage('الألمانية');
     if (langParam === 'tr') setLanguage('التركية');
   }, [searchParams]);
+
+  useEffect(() => {
+    const reveal = window.setTimeout(() => setShowQuickGuide(true), 250);
+    const dismiss = window.setTimeout(() => setShowQuickGuide(false), 7000);
+    return () => { window.clearTimeout(reveal); window.clearTimeout(dismiss); };
+  }, [isLogin]);
 
   // If user is already logged in, redirect to home
   useEffect(() => {
@@ -76,9 +84,7 @@ function RegisterForm() {
           <div className="absolute top-0 left-0 w-full h-28 bg-gradient-to-r from-blue-600 to-purple-600 -z-0" />
 
           <div className="relative z-10">
-            <div className="w-20 h-20 bg-white rounded-full mx-auto flex items-center justify-center shadow-lg mb-5 border-4 border-white mt-4">
-              <img src="/L8awy/brand/auth-mark.png" alt="تسجيل آمن" className="w-14 h-14 object-contain" />
-            </div>
+            <img src="/L8awy/brand/auth-mark.png" alt="تسجيل آمن" className="w-20 h-20 mx-auto mb-5 mt-4 object-contain drop-shadow-lg" />
 
             <h2 className="text-2xl font-bold font-cairo text-gray-900 mb-2">تم إنشاء حسابك بنجاح!</h2>
             <p className="text-red-600 font-bold mb-6 flex items-center justify-center gap-2 font-cairo text-sm">
@@ -116,9 +122,7 @@ function RegisterForm() {
       <div className="w-full max-w-md mt-16 md:mt-24">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="w-16 h-16 bg-blue-50 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-blue-100">
-            <img src="/L8awy/brand/auth-mark.png" alt="تسجيل الدخول أو إنشاء حساب" className="w-12 h-12 object-contain" />
-          </div>
+          <img src="/L8awy/brand/auth-mark.png" alt="تسجيل الدخول أو إنشاء حساب" className="w-16 h-16 mx-auto mb-4 object-contain drop-shadow-md" />
           <h1 className="text-2xl font-bold font-cairo text-gray-900 mb-1">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
           </h1>
@@ -128,6 +132,14 @@ function RegisterForm() {
               : 'أدخل بياناتك للحصول على كود الدخول'}
           </p>
         </div>
+
+        <AnimatePresence>
+          {showQuickGuide && <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-5 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-violet-50 p-4 font-cairo shadow-sm">
+            <p className="font-bold text-slate-900">إرشادات سريعة</p>
+            <p className="mt-1 text-xs leading-6 text-slate-600">{isLogin ? 'اكتب كود الطالب الذي حفظته عند إنشاء الحساب، ثم اضغط تسجيل الدخول.' : 'اكتب اسمك الثلاثي، رقم موبايلك، ثم اختر اللغة التي تريد أن تبدأ بها.'}</p>
+            <button onClick={() => setShowQuickGuide(false)} className="mt-3 w-full rounded-xl bg-white py-2.5 text-sm font-bold text-blue-700 shadow-sm">تخطي الإرشادات</button>
+          </motion.div>}
+        </AnimatePresence>
 
         {error && (
           <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-5 font-bold font-cairo border border-red-100 text-sm">

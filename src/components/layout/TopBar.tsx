@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoPerson } from 'react-icons/io5';
+import { IoLanguage, IoPerson } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TopBarProps {
@@ -80,7 +80,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
               className="w-12 h-12 flex items-center justify-center bg-transparent hover:opacity-85 transition-opacity"
               title="تغيير اللغة"
             >
-              <img src="/L8awy/brand/platform-mark.png" alt="لغوي" className="w-12 h-12 object-contain" />
+              <IoLanguage size={25} className="text-slate-700" />
             </button>
           )}
         </div>

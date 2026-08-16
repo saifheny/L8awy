@@ -4,7 +4,6 @@ import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import Footer from '@/components/layout/Footer';
-import TourGuide from '@/components/ui/TourGuide';
 import ReferralTracker from '@/components/layout/ReferralTracker';
 import FloatingAIAssistant from '@/components/ui/FloatingAIAssistant';
 import { Suspense } from 'react';
@@ -75,7 +74,6 @@ export default function RootLayout({
 
         
         <AuthProvider>
-          <TourGuide />
           <Suspense fallback={null}>
             <ReferralTracker />
           </Suspense>
