@@ -1,7 +1,6 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -12,6 +11,7 @@ import VideoSection from '@/components/course/VideoSection';
 import CommentsSection from '@/components/course/CommentsSection';
 import PurchaseModal from '@/components/home/PurchaseModal';
 import { IoArrowBack, IoChatbubbles, IoDocumentText, IoLockClosed, IoPeople, IoPlayCircle, IoSchool, IoStar, IoTime } from 'react-icons/io5';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 export default function ManagedCoursePage() {
   return <Suspense fallback={<div className="min-h-screen p-10 text-center font-cairo text-gray-500">جارٍ تحميل الكورس...</div>}><ManagedCourseContent /></Suspense>;
@@ -20,6 +20,7 @@ export default function ManagedCoursePage() {
 function ManagedCourseContent() {
   const courseId = useSearchParams().get('courseId') || '';
   const router = useRouter();
+  const goBack = useBackNavigation();
   const { user, loading: authLoading, isSubscribedToCourse, subscribeToCourse } = useAuth();
   const [course, setCourse] = useState<Course | null>(null);
   const [checking, setChecking] = useState(true);
@@ -55,7 +56,7 @@ function ManagedCourseContent() {
       <section className="relative min-h-[360px] overflow-hidden bg-gray-900 flex items-end">
         {cover && <img src={cover} alt={course.title} className="absolute inset-0 w-full h-full object-cover opacity-45" />}
         <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/55 to-transparent" />
-        <Link href="/" className="absolute top-6 left-6 z-10 w-11 h-11 rounded-full bg-white/15 border border-white/30 text-white grid place-items-center"><IoArrowBack size={22} /></Link>
+        <button onClick={goBack} className="absolute top-6 left-6 z-10 w-11 h-11 rounded-full bg-white/15 border border-white/30 text-white grid place-items-center"><IoArrowBack size={22} /></button>
         <div className="relative z-10 max-w-5xl mx-auto w-full px-5 py-10 text-white">
           <span className="inline-flex rounded-full bg-white/15 border border-white/20 px-3 py-1 text-sm font-bold">{course.level}</span>
           <h1 className="font-aref text-4xl md:text-5xl font-bold mt-4">{course.title}</h1>
