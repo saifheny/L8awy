@@ -42,8 +42,8 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             className="relative px-3 h-12 rounded-xl flex items-center justify-center gap-2 bg-white/80 hover:bg-white text-gray-800 transition-colors pointer-events-auto shadow-sm overflow-visible"
             title={user ? "المحفظة" : "الاشتراك"}
           >
-            <motion.span animate={walletNotice ? { scale: [1, 1.28, 1] } : { scale: 1 }} transition={{ duration: 0.5 }}><IoWallet size={24} className="text-blue-600" /></motion.span>
-            <motion.span animate={{ opacity: [1, 1, 0, 0, 1], width: ['auto', 'auto', 0, 0, 'auto'] }} transition={{ duration: 9, repeat: Infinity, times: [0, 0.38, 0.44, 0.64, 0.72], ease: 'easeInOut' }} className="font-bold font-cairo text-sm md:text-base overflow-hidden whitespace-nowrap">محفظتي</motion.span>
+            <motion.span animate={walletNotice ? { scale: [1, 1.28, 1] } : { scale: 1 }} transition={{ duration: 0.5 }} className="wallet-ring"><span className="wallet-core"><IoWallet size={21} className="text-blue-600" /></span></motion.span>
+            <span className="wallet-type">محفظتي</span>
             <AnimatePresence>{walletNotice && <motion.span initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5 }} className="absolute top-full right-0 mt-2 rounded-xl bg-emerald-600 text-white px-3 py-2 whitespace-nowrap text-xs font-cairo font-bold shadow-lg">تمت إضافة رصيد لمحفظتك ✨</motion.span>}</AnimatePresence>
           </motion.button>
         </div>
