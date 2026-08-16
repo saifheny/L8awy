@@ -9,7 +9,6 @@ import { courses as builtInCourses } from '@/data/courses';
 import type { Course } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 import VideoSection from '@/components/course/VideoSection';
-import ExamSection from '@/components/course/ExamSection';
 import CommentsSection from '@/components/course/CommentsSection';
 import PurchaseModal from '@/components/home/PurchaseModal';
 import { IoArrowBack, IoChatbubbles, IoDocumentText, IoLockClosed, IoPeople, IoPlayCircle, IoSchool, IoStar, IoTime } from 'react-icons/io5';
@@ -26,7 +25,6 @@ function ManagedCourseContent() {
   const [checking, setChecking] = useState(true);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'videos' | 'exams'>('videos');
 
   useEffect(() => {
     const load = async () => {
@@ -98,11 +96,8 @@ function ManagedCourseContent() {
           </>
         ) : (
           <>
-            <div className="flex gap-2 mb-6">
-              <button onClick={() => setActiveTab('videos')} className={`font-cairo font-bold px-5 py-3 rounded-xl ${activeTab === 'videos' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-600'}`}><IoPlayCircle className="inline ml-2" />الفيديوهات</button>
-              <button onClick={() => setActiveTab('exams')} className={`font-cairo font-bold px-5 py-3 rounded-xl ${activeTab === 'exams' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-600'}`}><IoDocumentText className="inline ml-2" />الامتحانات</button>
-            </div>
-            {activeTab === 'videos' ? <VideoSection playlistId={course.playlistId} /> : <ExamSection courseId={course.id} courseName={course.title} />}
+            <div className="flex items-center justify-between gap-3 mb-6"><div><p className="font-cairo text-sm text-gray-500">محتوى الكورس</p><h2 className="font-aref font-bold text-2xl text-gray-900">ابدأ التعلّم الآن</h2></div><button onClick={() => router.push(`/exams?courseId=${encodeURIComponent(course.id)}`)} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 font-cairo font-bold flex items-center gap-2"><IoDocumentText />الامتحانات</button></div>
+            {course.weeks?.length ? <div className="grid md:grid-cols-2 gap-5">{course.weeks.map((week, index) => <button key={week.id} onClick={() => router.push(`/lesson?courseId=${encodeURIComponent(course.id)}&weekId=${encodeURIComponent(week.id)}`)} className="group overflow-hidden text-right rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-blue-300 hover:shadow-lg transition-all"><div className="h-36 bg-slate-100 relative">{(week.image || course.image) && <img src={week.image || course.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />}<span className="absolute top-3 right-3 bg-slate-950/75 text-white rounded-full px-3 py-1 font-cairo text-xs">الأسبوع {index + 1}</span></div><div className="p-5"><h3 className="font-cairo font-bold text-lg">{week.title}</h3><p className="font-cairo text-sm text-gray-500 mt-2 line-clamp-2">{week.description || 'دروس هذا الأسبوع مرتبة لك في صفحة واحدة.'}</p><p className="font-cairo text-blue-600 text-sm font-bold mt-4">{week.videos.length} فيديوهات — افتح الأسبوع</p></div></button>)}</div> : <VideoSection playlistId={course.playlistId} />}
           </>
         )}
         <div className="mt-12"><CommentsSection courseId={course.id} isSubscribed={isSubscribed} /></div>

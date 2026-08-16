@@ -30,6 +30,37 @@ export interface Course {
   isOpen?: boolean;
   /** Optional larger image for the course landing page. */
   coverImage?: string;
+  weeks?: CourseWeek[];
+  exams?: ManagedExam[];
+}
+
+export interface CourseVideo extends Video {
+  weekId?: string;
+  videoUrl?: string;
+}
+
+export interface CourseWeek {
+  id: string;
+  title: string;
+  description?: string;
+  image?: string;
+  videos: CourseVideo[];
+}
+
+export interface ManagedQuestion {
+  id: string;
+  text: string;
+  options: string[];
+  correctAnswer: number;
+}
+
+export interface ManagedExam {
+  id: string;
+  title: string;
+  description?: string;
+  passingScore: number;
+  displayMode: 'one-by-one' | 'all-at-once';
+  questions: ManagedQuestion[];
 }
 
 export interface PromotionSettings {

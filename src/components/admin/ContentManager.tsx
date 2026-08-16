@@ -8,6 +8,7 @@ import { teachersData } from '@/data/teachers';
 import type { Course, CourseComment, PromotionSettings, User } from '@/lib/types';
 import { IoMegaphone, IoPeople, IoSchool, IoSend, IoWallet } from 'react-icons/io5';
 import StudentControls from '@/components/admin/StudentControls';
+import CurriculumManager from '@/components/admin/CurriculumManager';
 
 const blankCourse: Course = { id: '', title: '', description: '', level: 'مبتدئ', playlistId: '', image: '', coverImage: '', teacherCount: 1, examCount: 0, price: 0, durationMonths: 1, language: 'en', color: '#3b82f6', isOpen: true };
 
@@ -108,6 +109,8 @@ export default function ContentManager({ users, notify }: { users: ManagedUser[]
       </div>
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 md:p-7"><h3 className="font-cairo font-bold text-lg mb-4">كل الكورسات</h3><div className="space-y-2 max-h-[590px] overflow-auto">{courses.map((course) => <button key={course.id} onClick={() => setDraft(course)} className="w-full text-right p-3 rounded-xl hover:bg-blue-50 border border-gray-100"><p className="font-cairo font-bold text-sm text-gray-800">{course.title}</p><p className="font-cairo text-xs text-gray-500 mt-1">{course.id} · {course.isOpen === false ? 'مغلق' : 'مفتوح'} · {course.price} ج.م</p></button>)}</div></div>
     </section>
+
+    <CurriculumManager courses={courses} notify={notify} />
 
     <section className="grid lg:grid-cols-2 gap-6">
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6"><h2 className="font-cairo font-bold text-xl flex gap-2 items-center mb-5"><IoMegaphone className="text-green-600" />الإعلان ومكافأة الدعوة</h2><label className="flex items-center gap-2 mb-4 font-cairo"><input type="checkbox" checked={promotionDraft.enabled} onChange={(e) => setPromotionDraft({ ...promotionDraft, enabled: e.target.checked })} /> إظهار الإعلان</label><div className="space-y-3"><input value={promotionDraft.title} onChange={(e) => setPromotionDraft({ ...promotionDraft, title: e.target.value })} placeholder="عنوان الإعلان" className="input" /><textarea value={promotionDraft.description} onChange={(e) => setPromotionDraft({ ...promotionDraft, description: e.target.value })} placeholder="نص الإعلان" className="input min-h-20" /><input type="number" value={promotionDraft.referralReward} onChange={(e) => setPromotionDraft({ ...promotionDraft, referralReward: Number(e.target.value) })} placeholder="قيمة المكافأة بالجنيه" className="input" /></div><button onClick={savePromotion} className="mt-4 bg-green-600 text-white px-5 py-3 rounded-xl font-cairo font-bold">حفظ الإعلان</button></div>

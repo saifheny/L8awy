@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { fetchPlaylistVideos } from '@/lib/youtube';
-import type { Video } from '@/lib/types';
+import type { CourseVideo, Video } from '@/lib/types';
 import SkeletonLoader from '@/components/ui/SkeletonLoader';
 import { IoPlay, IoPause, IoVolumeHigh, IoVolumeMute, IoExpand } from 'react-icons/io5';
 
@@ -13,7 +13,12 @@ declare global {
   }
 }
 
-export default function VideoSection({ playlistId }: { playlistId: string }) {
+function extractYouTubeId(url: string) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/);
+  return match?.[1] || url;
+}
+
+export default function VideoSection({ playlistId, customVideos }: { playlistId?: string; customVideos?: CourseVideo[] }) {
   const [videos, setVideos] = useState<Video[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,7 +53,9 @@ export default function VideoSection({ playlistId }: { playlistId: string }) {
     const loadVideos = async () => {
       setLoading(true);
       try {
-        const data = await fetchPlaylistVideos(playlistId);
+        const data = customVideos !== undefined
+          ? customVideos.map((video) => ({ ...video, videoId: video.videoId || extractYouTubeId(video.videoUrl || '') }))
+          : await fetchPlaylistVideos(playlistId || '');
         setVideos(data);
         if (data.length > 0) setSelectedVideo(data[0]);
       } catch (error) {
@@ -58,7 +65,7 @@ export default function VideoSection({ playlistId }: { playlistId: string }) {
       }
     };
     loadVideos();
-  }, [playlistId]);
+  }, [playlistId, customVideos]);
 
   const destroyPlayer = useCallback(() => {
     if (playerRef.current) {
