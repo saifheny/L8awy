@@ -9,11 +9,13 @@ import { rtdb } from '@/lib/firebase';
 import { ref, onValue, push, serverTimestamp } from 'firebase/database';
 import { teachersData } from '@/data/teachers';
 import { courses } from '@/data/courses';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 export default function ChatPage() {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
+  const goBack = useBackNavigation();
   const { user, isSubscribedToCourse } = useAuth();
   
   const [messages, setMessages] = useState<any[]>([]);
@@ -143,7 +145,7 @@ export default function ChatPage() {
         </div>
         
         {/* Back Button on the Left (end of flex since RTL) */}
-        <button onClick={() => router.back()} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
+        <button onClick={goBack} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
           <IoArrowBack size={24} className="text-gray-700" />
         </button>
       </div>

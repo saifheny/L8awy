@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IoArrowBack, IoSearch, IoVolumeHigh, IoClose, IoLanguage, IoNewspaper, IoImages, IoBookOutline } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Definition { definition: string; example?: string; synonyms?: string[]; }
@@ -158,6 +159,7 @@ function NewsDivider() {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function ToolsPage() {
   const router = useRouter();
+  const goBack = useBackNavigation();
   const [query, setQuery] = useState('');
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -349,7 +351,7 @@ export default function ToolsPage() {
               
               {/* Unified Back Button (Cutout style) */}
               <button 
-                onClick={() => router.back()}
+                onClick={goBack}
                 className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors shadow-sm border border-gray-100 flex-shrink-0"
                 title="رجوع للصفحة السابقة"
               >

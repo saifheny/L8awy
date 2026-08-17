@@ -9,6 +9,31 @@ import { IoPerson, IoSend } from 'react-icons/io5';
 import type { CourseComment, Reply } from '@/lib/types';
 import { courseComments } from '@/data/comments';
 
+const reactionTypes = ['👍', '🎉', '❤️', '💡', '😢'] as const;
+
+function sampleReactionCounts(id: string): Record<string, number> {
+  const seed = [...id].reduce((total, char) => total + char.charCodeAt(0), 0);
+  return { '👍': 8 + (seed % 17), '🎉': 2 + (seed % 9), '❤️': 1 + (seed % 7), '💡': seed % 5, '😢': seed % 3 };
+}
+
+function playReactionSound() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(650, context.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(920, context.currentTime + 0.09);
+    gain.gain.setValueAtTime(0.07, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.16);
+    oscillator.connect(gain).connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.16);
+  } catch { /* Audio is an optional interaction enhancement. */ }
+}
+
 function dateLabel(value: CourseComment['createdAt']) {
   const date = typeof value === 'object' && value && 'toDate' in value
     ? value.toDate()
@@ -35,7 +60,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
   const [editingText, setEditingText] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
-  const [localReactions, setLocalReactions] = useState<Record<string, Record<string, number>>>({});
+  const [sampleReactionByUser, setSampleReactionByUser] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const commentsQuery = query(collection(db, 'courseComments'), where('courseId', '==', courseId));
@@ -55,6 +80,16 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
       setComments(data);
     }, () => setComments(builtIn()));
   }, [courseId]);
+
+  useEffect(() => {
+    if (!user?.uid) return setSampleReactionByUser({});
+    try {
+      const saved = localStorage.getItem(`loghawy-sample-reactions-${user.uid}`);
+      setSampleReactionByUser(saved ? JSON.parse(saved) : {});
+    } catch {
+      setSampleReactionByUser({});
+    }
+  }, [user?.uid]);
 
   const submit = async () => {
     if (!isSubscribed) return setMessage('يجب الاشتراك في الكورس قبل كتابة تعليق.');
@@ -97,7 +132,12 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
   const reactToComment = async (comment: CourseComment, reaction: string) => {
     if (!user) return setMessage('سجّل الدخول أولًا لإضافة تفاعل.');
     if (isSample(comment)) {
-      setLocalReactions((current) => ({ ...current, [comment.id]: { ...(current[comment.id] || {}), [reaction]: (current[comment.id]?.[reaction] || 0) + 1 } }));
+      const next = { ...sampleReactionByUser };
+      if (next[comment.id] === reaction) delete next[comment.id];
+      else next[comment.id] = reaction;
+      setSampleReactionByUser(next);
+      localStorage.setItem(`loghawy-sample-reactions-${user.uid}`, JSON.stringify(next));
+      playReactionSound();
       return;
     }
     const reference = doc(db, 'courseComments', comment.id);
@@ -118,6 +158,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
       }
       transaction.update(reference, { reactions, reactionByUser });
     });
+    playReactionSound();
   };
 
   const sendFollowUp = async (comment: CourseComment, parentReplyId?: string) => {
@@ -146,7 +187,9 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
       <div className="bg-gray-50 rounded-2xl border border-gray-100 divide-y divide-gray-100">
         {comments.length === 0 ? <p className="p-7 text-center text-gray-400 font-cairo text-sm">لا توجد تعليقات حتى الآن.</p> : comments.map((comment) => {
           const mine = user?.uid === comment.userId;
-          const reactions = isSample(comment) ? (localReactions[comment.id] || {}) : (comment.reactions || {});
+          const selectedReaction = isSample(comment) ? sampleReactionByUser[comment.id] : comment.reactionByUser?.[user?.uid || ''];
+          const sampleReactions = sampleReactionCounts(comment.id);
+          const reactions = isSample(comment) ? (selectedReaction ? { ...sampleReactions, [selectedReaction]: (sampleReactions[selectedReaction] || 0) + 1 } : sampleReactions) : (comment.reactions || {});
           const replies = (comment.replies || []).filter((reply) => !reply.isPrivate || reply.userId === user?.uid || comment.userId === user?.uid);
           const activeReplyTarget = replyingTo?.startsWith(`${comment.id}:`) ? replyingTo.split(':')[1] : undefined;
           const activeParentId = activeReplyTarget && activeReplyTarget !== 'root' ? activeReplyTarget : undefined;
@@ -157,7 +200,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
                 <div className="flex flex-wrap gap-2 items-center"><strong className="font-cairo text-sm">{comment.userName}</strong><span className="text-xs text-gray-400">{dateLabel(comment.createdAt)}</span>{comment.editedAt && <span className="text-[10px] text-gray-400">تم التعديل</span>}</div>
                 {editingComment === comment.id ? <div className="mt-2"><textarea value={editingText} onChange={(event) => setEditingText(event.target.value)} className="w-full min-h-20 rounded-xl border border-blue-200 bg-white p-3 font-cairo text-sm focus:outline-none" /><div className="mt-2 flex gap-2"><button onClick={() => editComment(comment)} className="rounded-lg bg-blue-600 px-3 py-1.5 font-cairo text-xs font-bold text-white">حفظ</button><button onClick={() => setEditingComment(null)} className="rounded-lg bg-gray-200 px-3 py-1.5 font-cairo text-xs font-bold text-gray-600">إلغاء</button></div></div> : <p className="mt-1 bg-white rounded-2xl rounded-tr-none px-3 py-2 inline-block text-sm text-gray-700">{comment.text}</p>}
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  {['👍', '🎉', '❤️', '💡', '😢'].map((reaction) => <button key={reaction} onClick={() => reactToComment(comment, reaction)} className={`rounded-full border px-2 py-1 text-xs transition-transform hover:scale-110 ${comment.reactionByUser?.[user?.uid || ''] === reaction ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white'}`}>{reaction}{reactions[reaction] ? <span className="mr-1 font-cairo text-[10px] text-gray-500">{reactions[reaction]}</span> : null}</button>)}
+                  {reactionTypes.map((reaction) => <button key={reaction} onClick={() => reactToComment(comment, reaction)} className={`rounded-full border px-2 py-1 text-xs transition-transform hover:scale-110 ${selectedReaction === reaction ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white'}`}>{reaction}{reactions[reaction] ? <span className="mr-1 font-cairo text-[10px] text-gray-500">{reactions[reaction]}</span> : null}</button>)}
                   {mine && !isSample(comment) && editingComment !== comment.id && <><button onClick={() => { setEditingComment(comment.id); setEditingText(comment.text); }} className="mr-2 text-xs font-cairo text-blue-600">تعديل</button><button onClick={() => removeComment(comment)} className="text-xs font-cairo text-red-600">حذف</button></>}
                 </div>
               </div>

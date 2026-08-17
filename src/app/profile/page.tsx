@@ -8,9 +8,11 @@ import CourseCard from '@/components/home/CourseCard';
 import { usePlatformCourses } from '@/hooks/usePlatformContent';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 export default function ProfilePage() {
   const router = useRouter();
+  const goBack = useBackNavigation();
   const { user, logout, isSubscribedToCourse } = useAuth();
   const [copied, setCopied] = useState(false);
   const [subscribedCourses, setSubscribedCourses] = useState<any[]>([]);
@@ -73,7 +75,7 @@ export default function ProfilePage() {
           الملف الشخصي
         </h1>
         <button 
-          onClick={() => router.back()}
+          onClick={goBack}
           className="w-10 h-10 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 transition-colors shadow-sm"
         >
           <IoArrowBack size={24} className="text-gray-700" />

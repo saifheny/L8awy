@@ -9,9 +9,11 @@ import { IoArrowBack, IoWalletOutline, IoCheckmarkCircle, IoTimeOutline, IoClose
 import type { WalletTransaction } from '@/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePromotionSettings } from '@/hooks/usePlatformContent';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 export default function WalletPage() {
   const router = useRouter();
+  const goBack = useBackNavigation();
   const { user, chargeWallet, loading: authLoading } = useAuth();
   
   const [amount, setAmount] = useState<number | ''>('');
@@ -23,6 +25,7 @@ export default function WalletPage() {
   const [referralCopied, setReferralCopied] = useState(false);
   const [referrals, setReferrals] = useState<any[]>([]);
   const [activeWalletTab, setActiveWalletTab] = useState<'charge' | 'referral'>('charge');
+  const [chargeNotice, setChargeNotice] = useState('');
   const promotion = usePromotionSettings();
 
   const VODAFONE_NUMBER = '01044824232';
@@ -56,6 +59,22 @@ export default function WalletPage() {
     }
   };
 
+  // The wallet history is live: an admin approval or rejection appears while
+  // the student is looking at the page, without a manual refresh.
+  useEffect(() => {
+    if (!user) return;
+    const transactionQuery = query(collection(db, 'transactions'), where('userId', '==', user.uid));
+    return onSnapshot(transactionQuery, (snapshot) => {
+      const data = snapshot.docs.map((item) => ({ id: item.id, ...item.data() } as WalletTransaction));
+      data.sort((a, b) => {
+        const timeA = a.timestamp?.toMillis ? a.timestamp.toMillis() : 0;
+        const timeB = b.timestamp?.toMillis ? b.timestamp.toMillis() : 0;
+        return timeB - timeA;
+      });
+      setTransactions(data);
+    });
+  }, [user?.uid]);
+
   // Listen to referrals in real-time
   useEffect(() => {
     if (!user) return;
@@ -78,6 +97,11 @@ export default function WalletPage() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 700 * 1024) {
+        setChargeNotice('الصورة كبيرة. اختر لقطة شاشة أصغر من 700 كيلوبايت حتى يصل الطلب للإدارة.');
+        return;
+      }
+      setChargeNotice('');
       const reader = new FileReader();
       reader.onloadend = () => {
         setReceiptImage(reader.result as string);
@@ -92,6 +116,7 @@ export default function WalletPage() {
       try {
         await chargeWallet(Number(amount), receiptImage);
         setIsSuccess(true);
+        setChargeNotice('');
         setTimeout(() => {
           setIsSuccess(false);
           setAmount('');
@@ -119,6 +144,18 @@ export default function WalletPage() {
     setTimeout(() => setReferralCopied(false), 2500);
   };
 
+  const shareReferralLink = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'لغوي', text: 'انضم إلى منصة لغوي من خلال رابط دعوتي', url: referralLink });
+        return;
+      }
+      copyReferralLink();
+    } catch {
+      // Closing the device share sheet is not an error that needs a message.
+    }
+  };
+
   const getStatusInfo = (status: string) => {
     switch (status) {
       case 'visited': return { text: 'زار المنصة', color: 'bg-yellow-100 text-yellow-700', icon: '👀' };
@@ -140,7 +177,7 @@ export default function WalletPage() {
             محفظتي
           </h1>
           <button 
-            onClick={() => router.back()}
+            onClick={goBack}
             className="w-10 h-10 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 transition-colors shadow-sm"
           >
             <IoArrowBack size={24} className="text-gray-700" />
@@ -274,6 +311,7 @@ export default function WalletPage() {
                       )}
                     </label>
                   </div>
+                  {chargeNotice && <p className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-center font-cairo text-xs font-bold text-amber-800">{chargeNotice}</p>}
                 </div>
 
                 <button
@@ -351,22 +389,21 @@ export default function WalletPage() {
                 <IoShareSocialOutline className="text-blue-600" />
                 رابط الدعوة الخاص بك
               </h3>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex-1 bg-gray-50 p-3.5 rounded-xl text-sm font-bold text-gray-700 border border-gray-200 truncate dir-ltr text-left">
                   {referralLink}
                 </div>
-                <button 
-                  onClick={copyReferralLink}
-                  className={`px-5 py-3.5 rounded-xl font-bold font-cairo text-sm transition-all flex items-center gap-2 shrink-0 ${
-                    referralCopied ? 'bg-green-500 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
-                  }`}
-                >
-                  {referralCopied ? (
-                    <><IoCheckmarkCircle size={18} /> تم النسخ!</>
-                  ) : (
-                    <><IoCopyOutline size={18} /> نسخ الرابط</>
-                  )}
-                </button>
+                <div className="grid grid-cols-2 gap-2 sm:flex">
+                  <button onClick={shareReferralLink} className="px-4 py-3.5 rounded-xl bg-emerald-600 font-bold font-cairo text-sm text-white transition-colors hover:bg-emerald-700"><IoShareSocialOutline className="inline ml-1" /> مشاركة</button>
+                  <button
+                    onClick={copyReferralLink}
+                    className={`px-4 py-3.5 rounded-xl font-bold font-cairo text-sm transition-all flex items-center justify-center gap-2 shrink-0 ${
+                      referralCopied ? 'bg-green-500 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {referralCopied ? <><IoCheckmarkCircle size={18} /> تم النسخ!</> : <><IoCopyOutline size={18} /> نسخ الرابط</>}
+                  </button>
+                </div>
               </div>
               <p className="text-xs text-gray-500 font-cairo mt-3 text-center">
                 شارك هذا الرابط مع أصدقائك عبر واتساب أو أي وسيلة تواصل

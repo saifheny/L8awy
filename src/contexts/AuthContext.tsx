@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { db } from '@/lib/firebase';
-import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, addDoc, serverTimestamp, Timestamp, onSnapshot, runTransaction } from 'firebase/firestore';
 import type { User, Subscription } from '@/lib/types';
 import { courses } from '@/data/courses';
 
@@ -52,6 +52,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     loadUser();
   }, []);
+
+  // Wallet approvals and account changes should reach the open session instantly.
+  useEffect(() => {
+    if (!user?.uid) return;
+    return onSnapshot(doc(db, 'users', user.uid), (snapshot) => {
+      if (!snapshot.exists()) return;
+      const next = { uid: snapshot.id, ...snapshot.data() } as User;
+      if (next.isSuspended) {
+        localStorage.removeItem('userCode');
+        setUser(null);
+        return;
+      }
+      setUser(next);
+    });
+  }, [user?.uid]);
 
   const generateLoginCode = () => {
     const randomNum = Math.floor(100000 + Math.random() * 900000);
@@ -175,9 +190,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateWalletBalance = async (amount: number) => {
     if (!user) return;
-    const newBalance = (user.walletBalance || 0) + amount;
-    await updateDoc(doc(db, 'users', user.uid), { walletBalance: newBalance });
-    setUser({ ...user, walletBalance: newBalance });
+    const userRef = doc(db, 'users', user.uid);
+    await runTransaction(db, async (transaction) => {
+      const account = await transaction.get(userRef);
+      if (!account.exists()) throw new Error('Account does not exist.');
+      const nextBalance = Number(account.data().walletBalance || 0) + amount;
+      if (nextBalance < 0) throw new Error('Insufficient wallet balance.');
+      transaction.update(userRef, { walletBalance: nextBalance });
+    });
   };
 
   const chargeWallet = async (amount: number, receiptImage: string) => {
@@ -197,10 +217,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const subscribeToCourse = async (courseId: string) => {
     if (!user) return false;
-    
-    // Check if already subscribed
-    const isSubscribed = await isSubscribedToCourse(courseId);
-    if (isSubscribed) return true;
 
     const managedCourse = await getDoc(doc(db, 'courses', courseId));
     const courseObj = managedCourse.exists()
@@ -208,26 +224,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       : courses.find(c => c.id === courseId);
     if (!courseObj) return false;
 
-    const price = courseObj.price;
-    if (user.walletBalance < price) {
-      throw new Error('رصيد المحفظة غير كافٍ. يرجى شحن المحفظة أولاً.');
-      return false;
-    }
+    const comprehensiveId = courseObj.id.endsWith('-comprehensive')
+      ? courseObj.id
+      : `${courseObj.language}-comprehensive`;
+    const comprehensiveDoc = comprehensiveId === courseObj.id
+      ? managedCourse
+      : await getDoc(doc(db, 'courses', comprehensiveId));
+    const purchaseCourse = comprehensiveDoc.exists()
+      ? ({ id: comprehensiveDoc.id, ...comprehensiveDoc.data() } as typeof courses[number])
+      : courses.find((item) => item.id === comprehensiveId) || courseObj;
 
     try {
-      // Deduct from wallet
-      await updateWalletBalance(-price);
-
-      // Create subscription
       const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + (courseObj.durationMonths || 2));
+      endDate.setMonth(endDate.getMonth() + (purchaseCourse.durationMonths || 2));
+      const userRef = doc(db, 'users', user.uid);
+      const subscriptionRef = doc(db, 'subscriptions', `${user.uid}_${purchaseCourse.id}`);
+      const walletTransactionRef = doc(collection(db, 'transactions'));
 
-      await addDoc(collection(db, 'subscriptions'), {
-        userId: user.uid,
-        courseId,
-        startDate: serverTimestamp(),
-        endDate: Timestamp.fromDate(endDate),
-        active: true
+      await runTransaction(db, async (transaction) => {
+        const [account, existingSubscription] = await Promise.all([
+          transaction.get(userRef),
+          transaction.get(subscriptionRef),
+        ]);
+        if (!account.exists()) throw new Error('Account does not exist.');
+        if (existingSubscription.exists() && existingSubscription.data().active) return;
+        const balance = Number(account.data().walletBalance || 0);
+        const price = Number(purchaseCourse.price || 0);
+        if (balance < price) throw new Error('Insufficient wallet balance.');
+        transaction.update(userRef, { walletBalance: balance - price });
+        transaction.set(subscriptionRef, {
+          userId: user.uid,
+          courseId: purchaseCourse.id,
+          startDate: serverTimestamp(),
+          endDate: Timestamp.fromDate(endDate),
+          active: true,
+        });
+        transaction.set(walletTransactionRef, {
+          userId: user.uid,
+          userName: user.displayName,
+          amount: price,
+          type: 'purchase',
+          description: `Course subscription: ${purchaseCourse.title}`,
+          timestamp: serverTimestamp(),
+          status: 'approved',
+        });
       });
 
       // Add referral reward logic
@@ -298,11 +338,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const now = new Date();
       let isSubbed = false;
       
-      // Determine language and comprehensive ID if applicable
-      let comprehensiveId = '';
-      if (courseId.startsWith('english-')) comprehensiveId = 'english-comprehensive';
-      if (courseId.startsWith('german-')) comprehensiveId = 'german-comprehensive';
-      if (courseId.startsWith('turkish-')) comprehensiveId = 'turkish-comprehensive';
+      const managedCourse = await getDoc(doc(db, 'courses', courseId));
+      const course = managedCourse.exists()
+        ? ({ id: managedCourse.id, ...managedCourse.data() } as typeof courses[number])
+        : courses.find((item) => item.id === courseId);
+      const comprehensiveId = course && !course.id.endsWith('-comprehensive')
+        ? `${course.language}-comprehensive`
+        : courseId;
 
       querySnapshot.forEach((doc) => {
         const sub = doc.data();

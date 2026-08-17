@@ -113,7 +113,21 @@ function buildComments(
       : [{ id: `${prefix}extra-${index + 1}r`, userName: teacher(index), role: 'teacher', text: 'مبسوطين بتقدمك، كمل بالتدريج وراجع الأمثلة أولًا بأول.', timestamp: `2026-08-${12 + index}T${11 + (index % 8)}:00:00Z` }],
   }));
 
-  return [...comments, ...extraComments];
+  // Each course keeps a distinct discussion atmosphere instead of cloning the
+  // same visible wording across all levels of a language.
+  const courseSeed = [...courseId].reduce((total, character) => total + character.charCodeAt(0), 0);
+  const courseNotes = [
+    'وأكثر جزء أفادني كان ترتيب الوحدات هنا.',
+    'والتطبيقات الخاصة بهذا المستوى فرّقت معي جدًا.',
+    'خصوصًا بعد ما راجعت تدريبات هذه المرحلة.',
+    'والأمثلة الموجودة في هذا الكورس كانت واضحة جدًا.',
+    'وطريقة توزيع الدروس هنا خلّت المتابعة أسهل.',
+    'والاختبارات القصيرة بعد الدروس ساعدتني أثبت المعلومة.',
+  ];
+  return [...comments, ...extraComments].map((comment, index) => ({
+    ...comment,
+    text: `${comment.text} ${courseNotes[(courseSeed + index) % courseNotes.length]}`,
+  }));
 }
 
 export const courseComments: Record<string, Comment[]> = {

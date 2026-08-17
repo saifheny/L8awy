@@ -7,9 +7,11 @@ import { IoArrowBack, IoPeopleOutline, IoChatbubbleEllipsesOutline } from 'react
 import { motion } from 'framer-motion';
 
 import { teachersData } from '@/data/teachers';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 export default function TeachersPage() {
   const router = useRouter();
+  const goBack = useBackNavigation();
   const { user } = useAuth();
   const [teachers, setTeachers] = useState(teachersData);
 
@@ -36,7 +38,7 @@ export default function TeachersPage() {
           مدرسين {user.selectedLanguage}
         </h1>
         <button 
-          onClick={() => router.back()}
+          onClick={goBack}
           className="w-10 h-10 rounded-full flex items-center justify-center bg-white/50 hover:bg-white/80 transition-colors shadow-sm"
         >
           <IoArrowBack size={24} className="text-gray-700" />

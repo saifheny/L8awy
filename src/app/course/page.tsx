@@ -49,6 +49,8 @@ function ManagedCourseContent() {
 
   const blocked = course.isOpen === false;
   const cover = course.coverImage || course.image;
+  const parentCourseId = course.id.endsWith('-comprehensive') ? course.id : `${course.language}-comprehensive`;
+  const subscriptionCourse = builtInCourses.find((item) => item.id === parentCourseId) || course;
   const openPurchase = () => user ? setPurchaseOpen(true) : router.push('/register');
 
   return (
@@ -82,7 +84,7 @@ function ManagedCourseContent() {
                   <h2 className="font-aref text-3xl md:text-4xl font-bold mt-4">كل أدوات الكورس جاهزة لك</h2>
                   <p className="font-cairo text-white/85 leading-7 mt-3 max-w-2xl">اشترك مرة واحدة وافتح الفيديوهات والامتحانات وتواصل مع المدرسين واكتب أسئلتك داخل الكورس.</p>
                 </div>
-                <div className="rounded-2xl bg-white/10 border border-white/20 p-5 text-center min-w-44 backdrop-blur-sm"><p className="text-xs font-cairo text-white/70">سعر الاشتراك</p><p className="text-3xl font-black mt-1">{course.price === 0 ? 'مجاني' : `${course.price} ج.م`}</p><button onClick={openPurchase} className="mt-4 w-full bg-white text-blue-700 hover:bg-blue-50 rounded-xl py-3 font-cairo font-bold">{course.price === 0 ? 'انضم الآن' : 'اشترك الآن'}</button></div>
+                <div className="rounded-2xl bg-white/10 border border-white/20 p-5 text-center min-w-44 backdrop-blur-sm"><p className="text-xs font-cairo text-white/70">سعر الاشتراك</p><p className="text-3xl font-black mt-1">{subscriptionCourse.price === 0 ? 'مجاني' : `${subscriptionCourse.price} ج.م`}</p>{course.id !== subscriptionCourse.id && <p className="mt-1 text-[11px] font-cairo text-white/70">يُفتح بالاشتراك في الكورس الشامل</p>}<button onClick={openPurchase} className="mt-4 w-full bg-white text-blue-700 hover:bg-blue-50 rounded-xl py-3 font-cairo font-bold">{subscriptionCourse.price === 0 ? 'انضم الآن' : 'اشترك الآن'}</button></div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 mt-6 lg:grid-cols-4 lg:gap-4">
@@ -103,7 +105,7 @@ function ManagedCourseContent() {
         )}
         <div className="mt-12"><CommentsSection courseId={course.id} isSubscribed={isSubscribed} /></div>
       </section>
-      <PurchaseModal isOpen={purchaseOpen} onClose={() => setPurchaseOpen(false)} course={course} balance={user?.walletBalance || 0} onPurchase={async (id) => { if (await subscribeToCourse(id)) { setPurchaseOpen(false); setIsSubscribed(true); } }} />
+      <PurchaseModal isOpen={purchaseOpen} onClose={() => setPurchaseOpen(false)} course={subscriptionCourse} balance={user?.walletBalance || 0} onPurchase={async (id) => { if (await subscribeToCourse(id)) { setPurchaseOpen(false); setIsSubscribed(true); } }} />
     </main>
   );
 }

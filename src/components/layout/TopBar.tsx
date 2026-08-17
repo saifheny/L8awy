@@ -73,7 +73,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
         {/* Left Side */}
         <div className="flex items-center justify-end min-w-[3rem] pointer-events-auto">
           {user ? (
-            <Link href="/profile">
+            <Link href="/profile" className="fixed top-3 left-3 z-50 md:top-4 md:left-4">
               <div className="flex items-center gap-3 cursor-pointer hover:bg-white/50 p-1.5 rounded-xl transition-colors">
                 <div className="flex flex-col text-right">
                   <span className="text-sm font-bold text-gray-900 leading-none">
