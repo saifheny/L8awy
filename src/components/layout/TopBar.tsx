@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoArrowUpOutline, IoPerson } from 'react-icons/io5';
+import { IoPerson } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TopBarProps {
@@ -19,6 +19,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
   const [showFreeRegister, setShowFreeRegister] = useState(false);
   const [showWalletLabel, setShowWalletLabel] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [showLanguageLabel, setShowLanguageLabel] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -48,6 +49,17 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
     const cycle = window.setInterval(reveal, 25000);
     return () => { window.clearTimeout(first); window.clearInterval(cycle); };
   }, [user?.uid]);
+
+  useEffect(() => {
+    if (user) return;
+    const reveal = () => {
+      setShowLanguageLabel(true);
+      window.setTimeout(() => setShowLanguageLabel(false), 5000);
+    };
+    const first = window.setTimeout(reveal, 20000);
+    const cycle = window.setInterval(reveal, 25000);
+    return () => { window.clearTimeout(first); window.clearInterval(cycle); };
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -109,11 +121,12 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             <button
               id="tour-lang-selector"
               onClick={onLanguageClick}
-              className="fixed top-3 left-3 z-50 flex h-16 items-center bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
+              className="fixed top-3 left-3 z-50 flex h-12 items-center gap-2 bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
               title="تغيير اللغة"
+              dir="ltr"
             >
-              <img src="/L8awy/brand/language-guide.png" alt="اختيار اللغة" className="h-16 w-16 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
-              <span className="absolute -bottom-7 left-0 flex items-center gap-1 whitespace-nowrap font-aref text-base font-bold text-indigo-700 drop-shadow-sm"><IoArrowUpOutline className="animate-bounce" /> اختر اللغة</span>
+              <img src="/L8awy/brand/language-selector.png" alt="اختيار اللغة" className="h-11 w-11 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
+              <AnimatePresence initial={false}>{showLanguageLabel && <motion.span initial={{ opacity: 0, width: 0, x: -8 }} animate={{ opacity: 1, width: 'auto', x: 0 }} exit={{ opacity: 0, width: 0, x: -8 }} className="language-brand-name" dir="rtl" aria-label="اختيار اللغة"><span>ا</span><span>خ</span><span>ت</span><span>ي</span><span>ا</span><span>ر</span><span>&nbsp;</span><span>ا</span><span>ل</span><span>ل</span><span>غ</span><span>ة</span></motion.span>}</AnimatePresence>
             </button>
           )}
         </div>

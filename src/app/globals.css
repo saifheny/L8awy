@@ -228,7 +228,8 @@ body::after {
   48%, 78% { opacity: 1; transform: translateX(0); max-width: 7em; }
 }
 
-.wallet-brand-name {
+.wallet-brand-name,
+.language-brand-name {
   display: flex;
   direction: rtl;
   max-width: none;
@@ -239,8 +240,6 @@ body::after {
   font-weight: 900;
   animation: none;
 }
-
-.language-brand-name { display: none; }
 
 .wallet-brand-name span:nth-child(4n + 1), .language-brand-name span:nth-child(4n + 1) { color: #4285f4; }
 .wallet-brand-name span:nth-child(4n + 2), .language-brand-name span:nth-child(4n + 2) { color: #34a853; }

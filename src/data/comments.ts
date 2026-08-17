@@ -98,7 +98,7 @@ function buildComments(
     },
   ];
 
-  const extraStudents = ['محمود سامي', 'شهد علي', 'زياد حاتم', 'ملك محمد', 'كريم طارق', 'نوران أحمد', 'يوسف أشرف', 'هنا وليد', 'علي حسام', 'سارة ممدوح', 'إسلام رجب'];
+  const extraStudents = ['محمود سامي', 'شهد علي', 'زياد حاتم', 'ملك محمد', 'كريم طارق', 'نوران أحمد', 'يوسف أشرف', 'هنا وليد', 'علي حسام', 'سارة ممدوح', 'إسلام رجب', 'مريم عادل'];
   const extraComments: Comment[] = extraStudents.map((userName, index) => ({
     id: `${prefix}extra-${index + 1}`,
     courseId,

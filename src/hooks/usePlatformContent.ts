@@ -19,7 +19,8 @@ export function usePlatformCourses() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    return onSnapshot(collection(db, 'courses'), (snapshot) => {
+    const fallback = window.setTimeout(() => setLoading(false), 900);
+    const unsubscribe = onSnapshot(collection(db, 'courses'), (snapshot) => {
       const managed = snapshot.docs.map((item) => ({ id: item.id, ...item.data() } as Course));
       const managedIds = new Set(managed.map((course) => course.id));
       setCourses([
@@ -28,6 +29,7 @@ export function usePlatformCourses() {
       ]);
       setLoading(false);
     }, () => setLoading(false));
+    return () => { window.clearTimeout(fallback); unsubscribe(); };
   }, []);
 
   return { courses, loading };

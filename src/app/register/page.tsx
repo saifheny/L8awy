@@ -168,7 +168,7 @@ function RegisterForm() {
                 value={loginCodeInput}
                 onChange={e => setLoginCodeInput(e.target.value)}
                 placeholder="كود الطالب (مثال: STU-123456)"
-                className="w-full bg-gray-50 border-2 border-gray-200 p-4 pr-12 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white text-gray-900 font-bold font-cairo transition-all text-left"
+                className="w-full bg-gray-50 border-2 border-gray-200 py-4 pl-4 pr-11 rounded-2xl focus:outline-none focus:border-blue-500 focus:bg-white text-gray-900 font-bold font-cairo transition-all text-left shadow-sm"
                 dir="ltr"
               />
               <label className="mt-3 flex cursor-pointer items-center gap-2 font-cairo text-xs text-gray-600"><input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="h-4 w-4 accent-blue-600" />تذكّرني على هذا الجهاز</label>

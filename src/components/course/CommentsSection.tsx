@@ -61,6 +61,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [sampleReactionByUser, setSampleReactionByUser] = useState<Record<string, string>>({});
+  const [visibleComments, setVisibleComments] = useState(5);
 
   useEffect(() => {
     const commentsQuery = query(collection(db, 'courseComments'), where('courseId', '==', courseId));
@@ -80,6 +81,8 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
       setComments(data);
     }, () => setComments(builtIn()));
   }, [courseId]);
+
+  useEffect(() => setVisibleComments(5), [courseId]);
 
   useEffect(() => {
     if (!user?.uid) return setSampleReactionByUser({});
@@ -185,7 +188,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
         </div>
       </div>
       <div className="bg-gray-50 rounded-2xl border border-gray-100 divide-y divide-gray-100">
-        {comments.length === 0 ? <p className="p-7 text-center text-gray-400 font-cairo text-sm">لا توجد تعليقات حتى الآن.</p> : comments.map((comment) => {
+        {comments.length === 0 ? <p className="p-7 text-center text-gray-400 font-cairo text-sm">لا توجد تعليقات حتى الآن.</p> : comments.slice(0, visibleComments).map((comment) => {
           const mine = user?.uid === comment.userId;
           const selectedReaction = isSample(comment) ? sampleReactionByUser[comment.id] : comment.reactionByUser?.[user?.uid || ''];
           const sampleReactions = sampleReactionCounts(comment.id);
@@ -214,6 +217,7 @@ export default function CommentsSection({ courseId, isSubscribed = false }: { co
             {user && isSubscribed && !isSample(comment) && (activeReplyTarget ? <div className="mr-6 mt-3 sm:mr-10"><div className="flex gap-2"><input autoFocus value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder={activeParentId ? 'اكتب ردك داخل المحادثة...' : 'أضف ردًا على هذا التعليق...'} className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 font-cairo text-xs focus:outline-none focus:border-blue-400" /><button onClick={() => sendFollowUp(comment, activeParentId)} className="rounded-xl bg-slate-800 px-3 font-cairo text-xs font-bold text-white">إرسال</button></div></div> : <button onClick={() => { setReplyingTo(`${comment.id}:root`); setReplyText(''); }} className="mr-6 mt-3 text-xs font-cairo font-bold text-slate-600 sm:mr-10">رد على التعليق</button>)}
           </article>;
         })}
+        {comments.length > visibleComments && <div className="p-4 text-center"><button onClick={() => setVisibleComments((count) => count + 5)} className="rounded-full border border-slate-200 bg-white/70 px-5 py-2 font-cairo text-sm font-bold text-slate-600 shadow-sm transition hover:bg-slate-50">المزيد من التعليقات ({Math.min(5, comments.length - visibleComments)})</button></div>}
       </div>
     </section>
   );
