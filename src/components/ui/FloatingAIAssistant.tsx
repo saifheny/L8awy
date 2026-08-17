@@ -10,18 +10,34 @@ export default function FloatingAIAssistant() {
   const { user } = useAuth();
   const pathname = usePathname();
   const [expanded, setExpanded] = useState(false);
+  const [teachersDrawerOpen, setTeachersDrawerOpen] = useState(false);
 
   const isVisible = user && pathname === '/';
 
   useEffect(() => {
     if (!isVisible) return;
-    const timer = window.setTimeout(() => setExpanded((value) => !value), 5000);
-    return () => window.clearTimeout(timer);
-  }, [expanded, isVisible]);
+    const reveal = () => {
+      setExpanded(true);
+      window.setTimeout(() => setExpanded(false), 5000);
+    };
+    const first = window.setTimeout(reveal, 20000);
+    const cycle = window.setInterval(reveal, 25000);
+    return () => { window.clearTimeout(first); window.clearInterval(cycle); };
+  }, [isVisible]);
+
+  useEffect(() => {
+    const updateDrawerState = (event: Event) => {
+      const isOpen = Boolean((event as CustomEvent<boolean>).detail);
+      setTeachersDrawerOpen(isOpen);
+      if (isOpen) setExpanded(false);
+    };
+    window.addEventListener('loghawy:teachers-drawer', updateDrawerState);
+    return () => window.removeEventListener('loghawy:teachers-drawer', updateDrawerState);
+  }, []);
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {isVisible && !teachersDrawerOpen && (
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

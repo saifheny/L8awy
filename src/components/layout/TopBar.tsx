@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { IoPerson } from 'react-icons/io5';
+import { IoArrowUpOutline, IoPerson } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TopBarProps {
@@ -17,6 +17,8 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
   const previousBalance = useRef<number | null>(null);
   const [walletNotice, setWalletNotice] = useState(false);
   const [showFreeRegister, setShowFreeRegister] = useState(false);
+  const [showWalletLabel, setShowWalletLabel] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -36,6 +38,28 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
     return () => window.clearInterval(timer);
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+    const reveal = () => {
+      setShowWalletLabel(true);
+      window.setTimeout(() => setShowWalletLabel(false), 5000);
+    };
+    const first = window.setTimeout(reveal, 20000);
+    const cycle = window.setInterval(reveal, 25000);
+    return () => { window.clearTimeout(first); window.clearInterval(cycle); };
+  }, [user?.uid]);
+
+  useEffect(() => {
+    if (!user) return;
+    const reveal = () => {
+      setShowPhone(true);
+      window.setTimeout(() => setShowPhone(false), 10000);
+    };
+    const first = window.setTimeout(reveal, 30000);
+    const cycle = window.setInterval(reveal, 40000);
+    return () => { window.clearTimeout(first); window.clearInterval(cycle); };
+  }, [user?.uid]);
+
   return (
     <div className="absolute top-4 left-4 right-4 z-40 pointer-events-none" dir="rtl">
       <div className="px-4 py-2 flex items-center justify-between">
@@ -49,7 +73,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             title={user ? "المحفظة" : "الاشتراك"}
           >
             <motion.img animate={walletNotice ? { scale: [1, 1.2, 1] } : { scale: 1 }} transition={{ duration: 0.5 }} src="/L8awy/brand/wallet-mark.png" alt="محفظتي" className="h-11 w-11 object-contain" />
-            <span className="wallet-brand-name" aria-label="محفظتي"><span>م</span><span>ح</span><span>ف</span><span>ظ</span><span>ت</span><span>ي</span></span>
+            <AnimatePresence initial={false}>{showWalletLabel && <motion.span initial={{ opacity: 0, x: 8, width: 0 }} animate={{ opacity: 1, x: 0, width: 'auto' }} exit={{ opacity: 0, x: 8, width: 0 }} className="wallet-brand-name" aria-label="محفظتي"><span>م</span><span>ح</span><span>ف</span><span>ظ</span><span>ت</span><span>ي</span></motion.span>}</AnimatePresence>
             <AnimatePresence>{walletNotice && <motion.span initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5 }} className="absolute top-full right-0 mt-2 rounded-xl bg-emerald-600 text-white px-3 py-2 whitespace-nowrap text-xs font-cairo font-bold shadow-lg">تمت إضافة رصيد لمحفظتك ✨</motion.span>}</AnimatePresence>
           </motion.button>
         </div>
@@ -75,11 +99,7 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
           {user ? (
             <Link href="/profile" className="fixed top-3 left-3 z-50 md:top-4 md:left-4">
               <div className="flex items-center gap-3 cursor-pointer hover:bg-white/50 p-1.5 rounded-xl transition-colors">
-                <div className="flex flex-col text-right">
-                  <span className="text-sm font-bold text-gray-900 leading-none">
-                    {user.phone || (user.displayName ? user.displayName.split(' ')[0] : 'طالب')}
-                  </span>
-                </div>
+                <AnimatePresence initial={false}>{showPhone && <motion.div initial={{ opacity: 0, x: -8, width: 0 }} animate={{ opacity: 1, x: 0, width: 'auto' }} exit={{ opacity: 0, x: -8, width: 0 }} className="overflow-hidden"><span dir="ltr" className="block whitespace-nowrap text-sm font-bold text-gray-900 leading-none">{user.phone}</span></motion.div>}</AnimatePresence>
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-yellow-300 via-green-400 to-blue-500 shadow-sm border-2 border-white flex items-center justify-center">
                   <IoPerson className="text-white text-2xl" />
                 </div>
@@ -89,11 +109,11 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             <button
               id="tour-lang-selector"
               onClick={onLanguageClick}
-              className="fixed top-3 left-3 z-50 flex h-14 items-center gap-2 bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
+              className="fixed top-3 left-3 z-50 flex h-16 items-center bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
               title="تغيير اللغة"
             >
-              <img src="/L8awy/brand/language-mark.png" alt="اختيار اللغة" className="h-14 w-14 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
-              <span className="language-brand-name" aria-label="اختيار اللغة"><span>ا</span><span>خ</span><span>ت</span><span>ي</span><span>ا</span><span>ر</span><span>&nbsp;</span><span>ا</span><span>ل</span><span>ل</span><span>غ</span><span>ة</span></span>
+              <img src="/L8awy/brand/language-guide.png" alt="اختيار اللغة" className="h-16 w-16 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
+              <span className="absolute -bottom-7 left-0 flex items-center gap-1 whitespace-nowrap font-aref text-base font-bold text-indigo-700 drop-shadow-sm"><IoArrowUpOutline className="animate-bounce" /> اختر اللغة</span>
             </button>
           )}
         </div>

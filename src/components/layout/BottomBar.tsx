@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoBookOutline, IoWalletOutline, IoPeopleOutline, IoCloseOutline, IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { useAuth } from '@/contexts/AuthContext';
 import { teachersData } from '@/data/teachers';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 
 interface BottomBarProps {
   isSubscribed?: boolean;
@@ -16,6 +18,17 @@ export default function BottomBar({ isSubscribed }: BottomBarProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [teachersOpen, setTeachersOpen] = useState(false);
+  const [managedTeachers, setManagedTeachers] = useState<any[]>([]);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('loghawy:teachers-drawer', { detail: teachersOpen }));
+    return () => { window.dispatchEvent(new CustomEvent('loghawy:teachers-drawer', { detail: false })); };
+  }, [teachersOpen]);
+
+  useEffect(() => {
+    const staffQuery = query(collection(db, 'adminStaff'), where('role', '==', 'teacher'));
+    return onSnapshot(staffQuery, (snapshot) => setManagedTeachers(snapshot.docs.map((item) => ({ id: item.id, ...item.data(), managed: true }))));
+  }, []);
 
   if (!user) return null;
 
@@ -24,7 +37,10 @@ export default function BottomBar({ isSubscribed }: BottomBarProps) {
     'اللغة الإنجليزية': 'en', 'اللغة الألمانية': 'de', 'اللغة التركية': 'tr',
   };
   const langCode = user.selectedLanguage ? (langMap[user.selectedLanguage] || 'en') : 'en';
-  const myTeachers = teachersData.filter(t => t.lang === langCode);
+  const myTeachers = [
+    ...teachersData.filter((teacher) => teacher.lang === langCode),
+    ...managedTeachers.filter((teacher) => !teacher.language || teacher.language === langCode),
+  ];
 
   return (
     <>
@@ -77,7 +93,7 @@ export default function BottomBar({ isSubscribed }: BottomBarProps) {
                   myTeachers.map(teacher => (
                     <div
                       key={teacher.id}
-                      onClick={() => { setTeachersOpen(false); router.push(`/chat/${teacher.id}`); }}
+                      onClick={() => { setTeachersOpen(false); router.push(teacher.managed ? `/chat?teacherId=${encodeURIComponent(teacher.id)}` : `/chat/${teacher.id}`); }}
                       className="flex items-center gap-4 p-3.5 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/40 cursor-pointer transition-all bg-white"
                     >
                       <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
