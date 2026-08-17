@@ -241,6 +241,8 @@ body::after {
   animation: none;
 }
 
+.language-brand-name { gap: 0; letter-spacing: -0.06em; }
+
 .wallet-brand-name span:nth-child(4n + 1), .language-brand-name span:nth-child(4n + 1) { color: #4285f4; }
 .wallet-brand-name span:nth-child(4n + 2), .language-brand-name span:nth-child(4n + 2) { color: #34a853; }
 .wallet-brand-name span:nth-child(4n + 3), .language-brand-name span:nth-child(4n + 3) { color: #fbbc05; }

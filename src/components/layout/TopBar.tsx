@@ -121,11 +121,11 @@ export default function TopBar({ onLanguageClick, onWalletClick, onSubscribeClic
             <button
               id="tour-lang-selector"
               onClick={onLanguageClick}
-              className="fixed top-3 left-3 z-50 flex h-12 items-center gap-2 bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
+              className="fixed top-3 left-3 z-50 flex h-14 items-center gap-1.5 bg-transparent transition-transform hover:scale-[1.03] md:top-4 md:left-4"
               title="تغيير اللغة"
               dir="ltr"
             >
-              <img src="/L8awy/brand/language-selector.png" alt="اختيار اللغة" className="h-11 w-11 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
+              <img src="/L8awy/brand/language-selector.png" alt="اختيار اللغة" className="h-13 w-13 shrink-0 object-contain drop-shadow-[0_7px_11px_rgba(56,79,160,0.25)]" />
               <AnimatePresence initial={false}>{showLanguageLabel && <motion.span initial={{ opacity: 0, width: 0, x: -8 }} animate={{ opacity: 1, width: 'auto', x: 0 }} exit={{ opacity: 0, width: 0, x: -8 }} className="language-brand-name" dir="rtl" aria-label="اختيار اللغة"><span>ا</span><span>خ</span><span>ت</span><span>ي</span><span>ا</span><span>ر</span><span>&nbsp;</span><span>ا</span><span>ل</span><span>ل</span><span>غ</span><span>ة</span></motion.span>}</AnimatePresence>
             </button>
           )}
